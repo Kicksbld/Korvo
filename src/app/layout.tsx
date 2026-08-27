@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./korvo-tokens.css";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
@@ -23,9 +24,9 @@ const seasons = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Killian Boularand — Maker",
+  title: "Killian Boularand — Maker & tech enthusiast",
   description:
-    "Maker : je transforme des idées en objets et systèmes réels — du code à l'impression 3D — avec un cap : l'ingénierie logicielle embarquée. En recherche d'alternance.",
+    "Maker en réorientation vers l'ingénierie logicielle embarquée, aéronautique et spatial. Code, impression 3D, hardware. En recherche d'alternance.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

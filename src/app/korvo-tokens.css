@@ -1,0 +1,189 @@
+/* Korvo — design tokens + type roles.
+   Source: design system tokens/colors.css, typography.css, surfaces.css.
+   Imported once from layout.tsx, after globals.css. */
+
+:root {
+  /* brand values */
+  --korvo-floral-white: #f7f5ee;
+  --korvo-black: #000000;
+  --korvo-sage: #666d57;
+  --korvo-sand: #bbb5a7;
+  --korvo-cloud: #d0d0ce;
+
+  /* paper ramp */
+  --paper-raised: #fffdf7;
+  --paper: #f7f5ee;
+  --paper-sunken: #f1eee5;
+  --paper-inset: #eae6da;
+
+  /* ink ramp */
+  --ink: #000000;
+  --ink-2: #33322e;
+  --ink-3: #6f6d66;
+  --ink-4: #9c9a92;
+
+  /* sage ramp — the only accent */
+  --sage-900: #3f4335;
+  --sage-700: #545a47;
+  --sage: #666d57;
+  --sage-400: #8b9078;
+  --sage-200: #c7c9bc;
+  --sage-050: #eeede5;
+
+  /* rules */
+  --border-faint: #e3e2de;
+  --border-default: #d0d0ce;
+  --border-strong: #bbb5a7;
+  --border-ink: #000000;
+
+  /* surfaces */
+  --surface-page: var(--paper);
+  --surface-card-quiet: var(--paper-sunken);
+  --surface-inverse: var(--ink);
+
+  /* text */
+  --text-body: var(--ink-2);
+  --text-strong: var(--ink);
+  --text-muted: var(--ink-3);
+  --text-faint: var(--ink-4);
+  --text-accent: var(--sage);
+  --text-on-inverse: var(--paper);
+
+  /* interaction */
+  --accent: var(--sage);
+  --accent-hover: var(--sage-700);
+  --accent-press: var(--sage-900);
+  --link: var(--sage);
+  --link-hover: var(--sage-900);
+
+  /* type — --font-seasons / --font-source-sans come from next/font in layout.tsx */
+  --font-display: var(--font-seasons), "Iowan Old Style", Georgia, serif;
+  --font-body: var(--font-source-sans), system-ui, -apple-system, sans-serif;
+
+  --dur-fast: 120ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface-page);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+
+@layer components {
+  /* type roles */
+  .k-display-1 {
+    font: 400 clamp(48px, 7.4vw, 76px) / 1 var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+  }
+  .k-display-3 {
+    font: 400 clamp(30px, 4vw, 40px) / 1.1 var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+  }
+  .k-title-1 {
+    font: 400 clamp(26px, 3.2vw, 32px) / 1.16 var(--font-display);
+    letter-spacing: -0.01em;
+    color: var(--text-strong);
+  }
+  .k-title-3 {
+    font: 600 20px / 1.35 var(--font-body);
+    color: var(--text-strong);
+  }
+  .k-heading {
+    font: 600 18px / 1.35 var(--font-body);
+    color: var(--text-body);
+  }
+  .k-body-lg {
+    font: 400 18px / 1.65 var(--font-body);
+    text-wrap: pretty;
+  }
+  .k-body {
+    font: 400 16px / 1.65 var(--font-body);
+    text-wrap: pretty;
+  }
+  .k-body-sm {
+    font: 400 14px / 1.5 var(--font-body);
+  }
+  .k-caption {
+    font: 400 13px / 1.5 var(--font-body);
+    color: var(--text-muted);
+  }
+  .k-label {
+    font: 600 11px / 1.4 var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .k-ui {
+    font: 600 14px / 1.2 var(--font-body);
+  }
+
+  /* the one sage button */
+  .k-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--accent);
+    color: #fff;
+    font: 600 15px / 1 var(--font-body);
+    padding: 15px 22px;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-standard);
+  }
+  .k-btn:hover {
+    background: var(--accent-hover);
+    color: #fff;
+  }
+  .k-btn:active {
+    background: var(--accent-press);
+  }
+  .k-btn--sm {
+    font-size: 13px;
+    padding: 9px 14px;
+  }
+  .k-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage);
+  }
+
+  /* underlined text link */
+  .k-link {
+    color: var(--link);
+    border-bottom: 1px solid var(--sage-200);
+    padding-bottom: 3px;
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard);
+  }
+  .k-link:hover {
+    color: var(--link-hover);
+    border-color: var(--sage);
+  }
+
+  /* image container — 6px radius, 1px inset hairline, caption outside */
+  .k-frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
