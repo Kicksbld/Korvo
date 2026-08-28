@@ -72,21 +72,21 @@ const SKILL_ICONS = [
 ];
 
 const GALLERY_META = [
-  { src: "/images/giza.jpg", span: "md:col-span-7", height: "h-[300px] md:h-[500px]" },
-  { src: "/images/pyramid.png", span: "md:col-span-5", height: "h-[300px] md:h-[500px]" },
-  { src: "/images/toutankamon.png", span: "md:col-span-5", height: "h-[300px] md:h-[420px]" },
-  { src: "/images/egypte-atterissage.png", span: "md:col-span-3", height: "h-[300px] md:h-[420px]" },
-  { src: "/images/colise.jpg", span: "md:col-span-4", height: "h-[300px] md:h-[420px]" },
-  { src: "/images/arc-rome.jpg", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
-  { src: "/images/cannes.jpeg", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
-  { src: "/images/alyssia.jpg", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
+  { src: "/images/giza.webp", span: "md:col-span-7", height: "h-[300px] md:h-[500px]" },
+  { src: "/images/pyramid.webp", span: "md:col-span-5", height: "h-[300px] md:h-[500px]" },
+  { src: "/images/toutankamon.webp", span: "md:col-span-5", height: "h-[300px] md:h-[420px]" },
+  { src: "/images/egypte-atterissage.webp", span: "md:col-span-3", height: "h-[300px] md:h-[420px]" },
+  { src: "/images/colise.webp", span: "md:col-span-4", height: "h-[300px] md:h-[420px]" },
+  { src: "/images/arc-rome.webp", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
+  { src: "/images/cannes.webp", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
+  { src: "/images/alyssia.webp", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
 ];
 
 /* le procédé raconté par une vraie pièce : le loquet de portail,
    du croquis à l'objet monté */
 const MAKER_STEPS_META = [
   { src: "/images/sketch.png" },
-  { src: "/images/bambu.png" },
+  { src: "/images/bambu.webp" },
   { src: "/images/pied-a-coulisse-2.jpg" },
 ];
 
@@ -94,8 +94,8 @@ const MAKER_STEPS_META = [
    dictionnaires pour le texte qui les entoure */
 const WORD_IMAGES = [
   { src: "/images/obrado-logo.png", eager: true },
-  { src: "/images/iot.jpeg", position: "center 65%" },
-  { src: "/images/atelier.jpg" },
+  { src: "/images/iot.webp", position: "center 65%" },
+  { src: "/images/atelier.webp" },
 ];
 
 /* sources des photos de la timeline, alignées par index sur
@@ -103,7 +103,7 @@ const WORD_IMAGES = [
 const TIMELINE_IMAGES: (string[] | undefined)[] = [
   ["/images/cr-1.webp", "/images/cr-2.webp"],
   undefined,
-  ["/images/adn-studio.png", "/images/debatium.png", "/images/les-ignobles.webp"],
+  ["/images/adn-studio.webp", "/images/debatium.png", "/images/les-ignobles.webp"],
   undefined,
   undefined,
 ];
@@ -133,10 +133,10 @@ export default async function Home(props: PageProps<"/[lang]">) {
               style={{ background: "var(--sage-200)" }}
             >
               <Image
-                src="/images/portrait.jpg"
+                src="/images/portrait.webp"
                 alt="Portrait de Killian Boularand"
-                width={760}
-                height={1182}
+                width={400}
+                height={547}
                 preload
                 sizes="112px"
                 className="h-full scale-130 w-full object-cover object-top"
@@ -337,7 +337,7 @@ export default async function Home(props: PageProps<"/[lang]">) {
               </div>
               <div className="relative min-h-[280px] md:min-h-[400px]">
                 <Image
-                  src="/images/startup-weekend.jpg"
+                  src="/images/startup-weekend.webp"
                   alt={dict.projets.obrado.nomination.imageAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, 45vw"
@@ -567,13 +567,13 @@ export default async function Home(props: PageProps<"/[lang]">) {
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5">
               <Figure
-                src="/images/parapente.jpeg"
+                src="/images/parapente.webp"
                 alt={dict.aviation.parapenteAlt}
                 ratio="3 / 4"
                 sizes="(max-width: 640px) 100vw, 320px"
               />
               <Figure
-                src="/images/batem.jpg"
+                src="/images/batem.webp"
                 alt={dict.aviation.batemAlt}
                 ratio="3 / 4"
                 sizes="(max-width: 640px) 100vw, 320px"

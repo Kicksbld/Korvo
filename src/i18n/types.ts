@@ -7,6 +7,10 @@ export interface Dictionary {
   meta: {
     title: string;
     description: string;
+    /** Une ligne courte pour l'image OG (sous le nom). */
+    tagline: string;
+    /** Intitulé pour le JSON-LD Person (schema.org jobTitle). */
+    jobTitle: string;
   };
   header: {
     brand: string;

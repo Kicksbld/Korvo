@@ -5,6 +5,8 @@ const fr: Dictionary = {
     title: "Killian Boularand · Maker et passionné de tech",
     description:
       "Maker en réorientation vers l'ingénierie logicielle embarquée, aéronautique et spatial. Code, impression 3D, hardware. En recherche d'alternance.",
+    tagline: "Maker, passionné de tech et d'innovation",
+    jobTitle: "Maker",
   },
   header: {
     brand: "Korvo",

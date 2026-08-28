@@ -6,6 +6,8 @@ const en: Dictionary = {
     title: "Killian Boularand · Maker & tech enthusiast",
     description:
       "Maker transitioning into embedded software engineering, aerospace and aeronautics. Code, 3D printing, hardware. Currently looking for an apprenticeship.",
+    tagline: "Maker, passionate about tech and innovation",
+    jobTitle: "Maker",
   },
   header: {
     brand: "Korvo",

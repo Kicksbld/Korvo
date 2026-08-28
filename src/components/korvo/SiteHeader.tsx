@@ -33,15 +33,17 @@ function LangSwitch({
 /** En-tête 64px, papier : marque centrée (à gauche sur mobile), switch de
  *  langue, et un seul bouton « Menu » qui ouvre le sommaire plein écran.
  *  Pas d'ombre, pas de flou — une règle 1px qui s'affirme au défilement. */
+const SECTION_IDS = [
+  "projets",
+  "maker",
+  "parcours",
+  "competences",
+  "photographie",
+  "contact",
+] as const;
+
 export default function SiteHeader({ lang, dict }: { lang: Locale; dict: Dictionary }) {
-  const LINKS = [
-    { id: "projets", label: dict.header.nav.projets },
-    { id: "maker", label: dict.header.nav.maker },
-    { id: "parcours", label: dict.header.nav.parcours },
-    { id: "competences", label: dict.header.nav.competences },
-    { id: "photographie", label: dict.header.nav.photographie },
-    { id: "contact", label: dict.header.nav.contact },
-  ];
+  const LINKS = SECTION_IDS.map((id) => ({ id, label: dict.header.nav[id] }));
   const SOCIALS = getSocials(dict.footer.phoneLabel);
   const [active, setActive] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,7 +59,7 @@ export default function SiteHeader({ lang, dict }: { lang: Locale; dict: Diction
       },
       { rootMargin: "-80px 0px -55% 0px" },
     );
-    LINKS.forEach(({ id }) => {
+    SECTION_IDS.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });

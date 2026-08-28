@@ -15,12 +15,12 @@ Context for any Claude conversation picking up one of these plans.
 
 | # | File | Impact | Status |
 |---|------|--------|--------|
-| 1 | [01-images.md](01-images.md) | **Highest** — 35 MB of images in `public/`, one file is 11 MB | To do |
-| 2 | [02-fonts.md](02-fonts.md) | High — trial-license fonts replaced; cleanup remains | Partially done |
-| 3 | [03-seo.md](03-seo.md) | High — no OG/canonical/hreflang/sitemap/robots today | To do |
-| 4 | [04-performance.md](04-performance.md) | Medium — audit pass after images/fonts land | To do |
-| 5 | [05-code-cleanup.md](05-code-cleanup.md) | Low-medium — unused deps, stray files | To do |
-| 6 | [06-vercel-deploy.md](06-vercel-deploy.md) | Checklist for going live on korvo-studio.fr | To do |
+| 1 | [01-images.md](01-images.md) | **Highest** — 35 MB of images in `public/`, one file is 11 MB | Done (2026-08-28, 34 MB → 4 MB) |
+| 2 | [02-fonts.md](02-fonts.md) | High — trial-license fonts replaced; cleanup remains | Done (2026-08-28; optional `--font-seasons` rename skipped) |
+| 3 | [03-seo.md](03-seo.md) | High — no OG/canonical/hreflang/sitemap/robots today | Done (2026-08-28) — post-deploy checks (task 8) remain |
+| 4 | [04-performance.md](04-performance.md) | Medium — audit pass after images/fonts land | Done (2026-08-28; CLS/reduced-motion/a11y/contrast all already solid, no fixes needed) |
+| 5 | [05-code-cleanup.md](05-code-cleanup.md) | Low-medium — unused deps, stray files | Done (2026-08-28; optional page.tsx split not done, 1 lint warning fixed in SiteHeader.tsx) |
+| 6 | [06-vercel-deploy.md](06-vercel-deploy.md) | Checklist for going live on korvo-studio.fr | To do — user handling this one |
 
 Decisions already made by the user:
 - **No analytics** (no Vercel Analytics, no Speed Insights, nothing).

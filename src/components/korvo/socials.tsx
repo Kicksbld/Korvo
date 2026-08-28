@@ -2,6 +2,14 @@
    Trait 1.5px pour les pictos géométriques, aplat pour les marques
    (LinkedIn, GitHub) dont le glyphe ne se dessine pas au trait */
 
+/** Profils publics — source unique pour les liens du site et le `sameAs`
+ * du JSON-LD Person (layout). */
+export const SOCIAL_PROFILE_URLS = {
+  linkedin: "https://linkedin.com/in/killian-boularand",
+  github: "https://github.com/Kicksbld",
+  instagram: "https://www.instagram.com/killian_bd_/",
+} as const;
+
 export const ICON_PROPS = {
   width: 18,
   height: 18,
@@ -18,7 +26,7 @@ export const ICON_PROPS = {
 export function getSocials(phoneLabel: string) {
   return [
     {
-      href: "https://linkedin.com/in/killian-boularand",
+      href: SOCIAL_PROFILE_URLS.linkedin,
       label: "LinkedIn",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -27,7 +35,7 @@ export function getSocials(phoneLabel: string) {
       ),
     },
     {
-      href: "https://github.com/Kicksbld",
+      href: SOCIAL_PROFILE_URLS.github,
       label: "GitHub",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -36,7 +44,7 @@ export function getSocials(phoneLabel: string) {
       ),
     },
     {
-      href: "https://www.instagram.com/killian_bd_/",
+      href: SOCIAL_PROFILE_URLS.instagram,
       label: "Instagram",
       icon: (
         <svg {...ICON_PROPS} aria-hidden>
