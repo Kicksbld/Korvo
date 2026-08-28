@@ -30,6 +30,12 @@
   --sage-200: #c7c9bc;
   --sage-050: #eeede5;
 
+  /* vert « disponible » — le seul vert vif du site, réservé au signal de
+     statut live ; le sage reste l'accent éditorial */
+  --live-dot: #3aa655;
+  --live-text: #256b38;
+  --live-bg: #e2efdf;
+
   /* rules */
   --border-faint: #e3e2de;
   --border-default: #d0d0ce;
@@ -60,8 +66,16 @@
   --font-display: var(--font-seasons), "Iowan Old Style", Georgia, serif;
   --font-body: var(--font-source-sans), system-ui, -apple-system, sans-serif;
 
+  /* shape — three radii only: pill controls, soft images, large surfaces */
+  --radius-control: 999px;
+  --radius-img: 14px;
+  --radius-surface: 24px;
+
   --dur-fast: 120ms;
   --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -73,12 +87,20 @@ body {
   color: var(--text-body);
   font-family: var(--font-body);
   letter-spacing: 0;
+  /* the gallery breaks out to 100vw — clip the scrollbar-width overshoot */
+  overflow-x: clip;
 }
 
 @layer components {
   /* type roles */
   .k-display-1 {
     font: 400 clamp(48px, 7.4vw, 76px) / 1 var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+  }
+  /* le manifeste — entre display-1 (hero) et display-3 (sections) */
+  .k-display-2 {
+    font: 400 clamp(34px, 5.2vw, 60px) / 1.18 var(--font-display);
     letter-spacing: -0.02em;
     color: var(--text-strong);
   }
@@ -116,43 +138,67 @@ body {
     color: var(--text-muted);
   }
   .k-label {
-    font: 600 11px / 1.4 var(--font-body);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font: 700 13px / 1.4 var(--font-body);
+    letter-spacing: 0.01em;
   }
   .k-ui {
     font: 600 14px / 1.2 var(--font-body);
   }
 
-  /* the one sage button */
+  /* the one button — ink pill on paper; sage stays the link/detail accent */
   .k-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     border: 0;
-    border-radius: 3px;
-    background: var(--accent);
-    color: #fff;
+    border-radius: var(--radius-control);
+    background: var(--ink);
+    color: var(--paper);
     font: 600 15px / 1 var(--font-body);
-    padding: 15px 22px;
+    padding: 16px 28px;
     cursor: pointer;
-    transition: background-color var(--dur-fast) var(--ease-standard);
+    transition: background-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-out-quart);
   }
   .k-btn:hover {
-    background: var(--accent-hover);
-    color: #fff;
+    background: var(--sage-900);
+    color: var(--paper);
   }
   .k-btn:active {
-    background: var(--accent-press);
+    transform: scale(0.97);
   }
   .k-btn--sm {
     font-size: 13px;
-    padding: 9px 14px;
+    padding: 10px 18px;
+  }
+  /* CTA hero — la seule taille large du site ; la flèche plonge vers les
+     projets au survol, le mouvement dit « ça se passe plus bas » */
+  .k-btn--lg {
+    font-size: 16px;
+    padding: 18px 32px;
+  }
+  .k-btn--lg svg {
+    transition: transform var(--dur-fast) var(--ease-out-quart);
+  }
+  .k-btn--lg:hover svg {
+    transform: translateY(2px);
   }
   .k-btn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage);
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--ink);
+  }
+  /* paper pill for the inverse (deep sage) contact section */
+  .k-btn--inverse {
+    background: var(--paper);
+    color: var(--sage-900);
+  }
+  .k-btn--inverse:hover {
+    background: var(--paper-inset);
+    color: var(--sage-900);
+  }
+  .k-btn--inverse:focus-visible {
+    box-shadow: 0 0 0 2px var(--surface-inverse), 0 0 0 4px var(--paper);
   }
 
   /* underlined text link */
@@ -169,13 +215,329 @@ body {
     border-color: var(--sage);
   }
 
-  /* image container — 6px radius, 1px inset hairline, caption outside */
+  /* image container — soft radius, 1px inset hairline, no caption */
   .k-frame {
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 6px;
+    border-radius: var(--radius-img);
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+  .k-frame img {
+    transition: transform 420ms var(--ease-standard);
+  }
+  .k-figure:hover .k-frame img,
+  .k-figure:focus-within .k-frame img {
+    transform: scale(1.03);
+  }
+
+  /* photo-mot du manifeste — image à hauteur du corps insérée dans la phrase,
+     assez grande pour que la photo se lise. Dimensions en em pour suivre le
+     titre ; la révélation suit le sens de lecture via --reveal-i. */
+  .k-word-img {
+    position: relative;
+    display: inline-block;
+    width: 2.6em;
+    height: 1em;
+    margin: 0 0.12em;
+    vertical-align: -0.16em;
+    overflow: hidden;
+    border-radius: var(--radius-img);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    transition: opacity 560ms var(--ease-out-quint), transform 560ms var(--ease-out-quint);
+    transition-delay: calc(var(--reveal-i, 0) * 110ms + 180ms);
+  }
+  .k-word-img img {
+    transition: transform 420ms var(--ease-standard);
+  }
+  .k-word-img:hover img {
+    transform: scale(1.07);
+  }
+  [data-revealed="false"] .k-word-img {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+
+  /* trajectoire du cap — la ligne de vol se trace, l'avion apparaît en bout
+     de course une fois le tracé terminé */
+  .k-flight-path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 900ms var(--ease-out-quint) 200ms;
+  }
+  [data-revealed="false"] .k-flight-path {
+    stroke-dashoffset: 1;
+  }
+  .k-flight-plane {
+    transition: opacity 420ms var(--ease-out-quint) 950ms;
+  }
+  [data-revealed="false"] .k-flight-plane {
+    opacity: 0;
+  }
+
+  /* section rhythm — one generous clamp instead of a fixed padding everywhere */
+  .k-section {
+    padding-top: clamp(88px, 11vw, 150px);
+  }
+
+  /* nav links — plain text, no underline until active. Inline styles can't
+     express :hover, so these states live here instead. The active indicator
+     is an inset box-shadow (not border-bottom) so padding-bottom stays
+     constant across states and the line can fade in without a layout jump. */
+  .k-nav-link {
+    color: var(--text-muted);
+    padding-bottom: 3px;
+    box-shadow: inset 0 -1px 0 0 transparent;
+    transition: color var(--dur-fast) var(--ease-standard),
+      box-shadow 220ms var(--ease-out-quart);
+  }
+  .k-nav-link:hover {
+    color: var(--text-strong);
+  }
+  .k-nav-link[data-active="true"] {
+    color: var(--text-strong);
+    box-shadow: inset 0 -1px 0 0 var(--sage);
+  }
+  .k-nav-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
+    border-radius: 2px;
+  }
+
+  /* plain underlined text link — footer/contact/hero secondary links */
+  .k-text-link {
+    border-bottom: 1px solid var(--border-default);
+    padding-bottom: 3px;
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease-standard),
+      opacity var(--dur-fast) var(--ease-standard);
+  }
+  .k-text-link:hover {
+    border-color: currentColor;
+    opacity: 0.72;
+  }
+  .k-text-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
+    border-radius: 2px;
+  }
+
+  /* grille d'atelier — hairlines d'encre 24px derrière la barre de nav et le
+     hero ; fondue là où vit le contenu, le motif habite les bords */
+  .k-header-grid::before,
+  .k-hero-grid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+        0deg,
+        rgba(51, 50, 46, 0.06) 0 1px,
+        transparent 1px 24px
+      ),
+      repeating-linear-gradient(90deg, rgba(51, 50, 46, 0.06) 0 1px, transparent 1px 24px);
+  }
+  .k-header-grid::before {
+    -webkit-mask-image: linear-gradient(90deg, #000, transparent 38%, transparent 62%, #000);
+    mask-image: linear-gradient(90deg, #000, transparent 38%, transparent 62%, #000);
+  }
+  .k-hero-grid {
+    position: relative;
+    isolation: isolate;
+  }
+  .k-hero-grid::before {
+    z-index: -1;
+    /* déborde du conteneur 1180px pour couvrir toute la largeur de vue */
+    left: 50%;
+    right: auto;
+    width: 100vw;
+    transform: translateX(-50%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 45%, transparent 42%, #000 80%);
+    mask-image: radial-gradient(ellipse at 50% 45%, transparent 42%, #000 80%);
+  }
+
+  /* étiquette du portrait — petit carton papier posé de biais sur le bord
+     du cercle, comme une étiquette de colis ; hairline, pas d'ombre */
+  .k-hero-tag {
+    position: absolute;
+    top: 62%;
+    left: 100%;
+    transform: translate(-18px, -50%) rotate(-6deg);
+    white-space: nowrap;
+    background: var(--paper-raised);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-control);
+    padding: 8px 14px;
+    font: 600 13px / 1 var(--font-body);
+    color: var(--text-strong);
+  }
+
+  /* mobile nav panel */
+  .k-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--text-strong);
+    cursor: pointer;
+  }
+  .k-menu-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
+    border-radius: 3px;
+  }
+  .k-mobile-panel {
+    position: fixed;
+    inset: 64px 0 0 0;
+    z-index: 90;
+    background: var(--surface-page);
+    border-top: 1px solid var(--border-faint);
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(-6px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-out-quart), transform 200ms var(--ease-out-quart),
+      visibility 0s linear 200ms;
+  }
+  .k-mobile-panel[data-open="true"] {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 220ms var(--ease-out-quart), transform 220ms var(--ease-out-quart),
+      visibility 0s linear 0s;
+  }
+  .k-mobile-panel .k-nav-link {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: color var(--dur-fast) var(--ease-standard), box-shadow 220ms var(--ease-out-quart),
+      opacity 260ms var(--ease-out-quart), transform 260ms var(--ease-out-quart);
+    transition-delay: calc(var(--reveal-i, 0) * 40ms);
+  }
+  .k-mobile-panel[data-open="true"] .k-nav-link {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* scroll reveal — ScrollReveal.tsx arms [data-reveal] elements with
+     data-revealed="false" post-mount (no-JS / reduced-motion: stays fully
+     visible), then flips to "true" the first time each enters the viewport. */
+  .k-reveal {
+    transition: opacity 640ms var(--ease-out-quint), transform 640ms var(--ease-out-quint);
+  }
+  .k-reveal[data-revealed="false"] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  /* section rule — label fades in, the hairline draws left-to-right like a
+     ruled line, echoing the drafting-table precision of the rest of the UI */
+  .k-section-rule {
+    transition: opacity 480ms var(--ease-out-quint);
+  }
+  .k-section-rule[data-revealed="false"] {
+    opacity: 0;
+  }
+  .k-rule-draw {
+    transform-origin: left center;
+    transition: transform 640ms var(--ease-out-expo) 90ms;
+  }
+  .k-section-rule[data-revealed="false"] .k-rule-draw {
+    transform: scaleX(0);
+  }
+  /* repère d'établi — équerre avant le libellé, comme un trait de coupe
+     tracé avant la découpe plutôt qu'un badge d'UI générique */
+  .k-rule-mark {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-left: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+  }
+
+  /* photography gallery — the one place a light stagger is worth the extra
+     motion; --reveal-i is set per figure in page.tsx */
+  .k-gallery-figure {
+    transition: opacity 560ms var(--ease-out-quint), transform 560ms var(--ease-out-quint);
+    transition-delay: calc(var(--reveal-i, 0) * 55ms);
+  }
+  .k-gallery-figure[data-revealed="false"] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  /* hero entrance — pure CSS, no JS dependency; --reveal-i staggers each item */
+  @keyframes k-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .k-hero-in {
+    animation: k-fade-up 640ms var(--ease-out-quint) both;
+    animation-delay: calc(var(--reveal-i, 0) * 70ms);
+  }
+
+  /* pictos réseaux du footer — cerclés trait fin comme les icônes des cartes
+     compétences, mais posés sur l'encre sage ; le survol inverse papier/encre */
+  .k-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-control);
+    border: 1px solid rgba(247, 245, 238, 0.32);
+    color: var(--text-on-inverse);
+    transition: background-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-out-quart);
+  }
+  .k-social:hover {
+    background: var(--paper);
+    border-color: var(--paper);
+    color: var(--sage-900);
+  }
+  .k-social:active {
+    transform: scale(0.94);
+  }
+  .k-social:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--sage-900), 0 0 0 4px var(--paper);
+  }
+
+  /* wordmark géant du footer — monte d'un cran à l'entrée dans le viewport,
+     même vocabulaire que .k-reveal mais à l'échelle du bloc */
+  .k-footer-mark {
+    transition: opacity 720ms var(--ease-out-quint), transform 720ms var(--ease-out-quint);
+  }
+  .k-footer-mark[data-revealed="false"] {
+    opacity: 0;
+    transform: translateY(8%);
+  }
+
+  /* availability dot — a slow, quiet breathing ring; signals live status
+     rather than decorating */
+  @keyframes k-live-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(58, 166, 85, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(58, 166, 85, 0);
+    }
+  }
+  .k-live-dot {
+    animation: k-live-pulse 2600ms var(--ease-standard) infinite;
   }
 }
 
@@ -185,5 +547,7 @@ body {
   }
   * {
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
