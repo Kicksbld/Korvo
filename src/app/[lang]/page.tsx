@@ -323,7 +323,7 @@ export default async function Home(props: PageProps<"/[lang]">) {
                   alt={dict.projets.obrado.nomination.logoAlt}
                   width={103}
                   height={52}
-                  className="h-auto w-[128px]"
+                  className="h-auto w-24 md:w-32"
                 />
                 <p
                   className="k-title-1 mt-8 mb-0 max-w-[20ch]"
