@@ -1,10 +1,15 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import SiteHeader from "@/components/korvo/SiteHeader";
+import { ICON_PROPS, getSocials } from "@/components/korvo/socials";
 import ScrollReveal from "@/components/korvo/ScrollReveal";
+import { hasLocale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
 import {
   ArrowLink,
   Eyebrow,
   Figure,
+  Rich,
   SectionRule,
   SkillCard,
   TechList,
@@ -13,27 +18,20 @@ import {
 } from "@/components/korvo/ui";
 
 /* ------------------------------------------------------------------ *
- * Korvo — site de Killian Boularand, une seule page.
+ * Korvo — site de Killian Boularand, une seule page, en fr/en.
  * Direction : papier chaud + encre, sage en accent unique, règles 1px.
  * Pills encre, radius généreux, photos dominantes — la chaleur vient
  * des images, la précision des hairlines. Aucune décoration gratuite.
  * ------------------------------------------------------------------ */
 
-/* icônes des cartes compétences — trait 1.5px, encre, dans le cercle */
-const ICON_PROPS = {
-  width: 18,
-  height: 18,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 1.5,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
-} as const;
+/* icônes trait 1.5px, encre — ICON_PROPS et les réseaux vivent dans
+   socials.tsx, partagés avec le sommaire du header */
 
-const SKILL_CARDS = [
+/* données non traduisibles (icônes, images, mise en page) — le texte vit
+   dans les dictionnaires i18n et se recompose avec ces constantes par index */
+
+const SKILL_ICONS = [
   {
-    title: "Code",
     background: "var(--sage-200)",
     icon: (
       <svg {...ICON_PROPS} aria-hidden>
@@ -41,16 +39,8 @@ const SKILL_CARDS = [
         <path d="m16 7 5 5-5 5" />
       </svg>
     ),
-    items: [
-      { label: "Web · Next.js, Vue, Supabase" },
-      { label: "Mobile & spatial · Swift, ARKit, CoreML" },
-      { label: "Motion · GSAP, Three.js" },
-      { label: "IA embarquée · LLM on-device" },
-      { label: "Python, C / C++" },
-    ],
   },
   {
-    title: "Hardware / 3D",
     background: "var(--korvo-sand)",
     icon: (
       <svg {...ICON_PROPS} aria-hidden>
@@ -59,14 +49,8 @@ const SKILL_CARDS = [
         <path d="M12 22V12" />
       </svg>
     ),
-    items: [
-      { label: "Impression 3D · Bambu Lab A1 + AMS" },
-      { label: "CAO · Fusion 360, Blender" },
-      { label: "IoT · Arduino, ESP32, Raspberry Pi" },
-    ],
   },
   {
-    title: "Créatif",
     background: "var(--paper-inset)",
     icon: (
       <svg {...ICON_PROPS} aria-hidden>
@@ -74,13 +58,8 @@ const SKILL_CARDS = [
         <circle cx="12" cy="12.8" r="3.4" />
       </svg>
     ),
-    items: [
-      { label: "Photo · Lightroom" },
-      { label: "UI & identités · Figma" },
-    ],
   },
   {
-    title: "Langues",
     background: "var(--korvo-cloud)",
     icon: (
       <svg {...ICON_PROPS} aria-hidden>
@@ -89,136 +68,56 @@ const SKILL_CARDS = [
         <path d="M12 3a14.2 14.2 0 0 1 0 18 14.2 14.2 0 0 1 0-18Z" />
       </svg>
     ),
-    items: [
-      { label: "Français", level: "Natif" },
-      { label: "Anglais", level: "C1" },
-      { label: "Espagnol", level: "B1" },
-    ],
   },
 ];
 
-/* réseaux du footer — trait 1.5px pour les pictos géométriques, aplat pour
-   les marques (LinkedIn, GitHub) dont le glyphe ne se dessine pas au trait */
-const SOCIALS = [
-  {
-    href: "https://linkedin.com/in/killian-boularand",
-    label: "LinkedIn",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z" />
-      </svg>
-    ),
-  },
-  {
-    href: "https://github.com/Kicksbld",
-    label: "GitHub",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M12 1.75A10.25 10.25 0 0 0 8.76 21.73c.51.1.7-.22.7-.49v-1.9c-2.85.62-3.45-1.2-3.45-1.2-.47-1.18-1.14-1.5-1.14-1.5-.93-.63.07-.62.07-.62 1.03.07 1.57 1.05 1.57 1.05.91 1.57 2.4 1.12 2.98.85.09-.66.36-1.11.65-1.37-2.28-.26-4.67-1.14-4.67-5.06 0-1.12.4-2.03 1.05-2.75-.1-.26-.46-1.3.1-2.7 0 0 .86-.28 2.82 1.05a9.83 9.83 0 0 1 5.13 0c1.96-1.33 2.82-1.05 2.82-1.05.56 1.4.2 2.44.1 2.7.65.72 1.05 1.63 1.05 2.75 0 3.93-2.4 4.8-4.68 5.05.37.32.7.94.7 1.9v2.81c0 .27.18.6.7.49A10.25 10.25 0 0 0 12 1.75Z" />
-      </svg>
-    ),
-  },
-  {
-    href: "https://www.instagram.com/killian_bd_/",
-    label: "Instagram",
-    icon: (
-      <svg {...ICON_PROPS} aria-hidden>
-        <rect x="2.5" y="2.5" width="19" height="19" rx="5.2" />
-        <circle cx="12" cy="12" r="4.2" />
-        <path d="M17.4 6.6h.01" />
-      </svg>
-    ),
-  },
-  {
-    href: "tel:+33603850349",
-    label: "Téléphone · +33 6 03 85 03 49",
-    icon: (
-      <svg {...ICON_PROPS} aria-hidden>
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
-      </svg>
-    ),
-  },
-];
-
-const GALLERY = [
-  {
-    src: "/images/giza.jpg",
-    alt: "Plateau de Gizeh, Sphinx et pyramide de Khéphren",
-    span: "md:col-span-7",
-    height: "h-[300px] md:h-[500px]",
-  },
-  {
-    src: "/images/pyramid.png",
-    alt: "Ruelle de Nazlet el-Semman ouvrant sur la pyramide",
-    span: "md:col-span-5",
-    height: "h-[300px] md:h-[500px]",
-  },
-  {
-    src: "/images/toutankamon.png",
-    alt: "Sarcophage de Toutânkhamon",
-    span: "md:col-span-5",
-    height: "h-[300px] md:h-[420px]",
-  },
-  {
-    src: "/images/egypte-atterissage.png",
-    alt: "Approche de nuit au-dessus du Caire",
-    span: "md:col-span-3",
-    height: "h-[300px] md:h-[420px]",
-  },
-  {
-    src: "/images/colise.jpg",
-    alt: "Le Colisée, Rome",
-    span: "md:col-span-4",
-    height: "h-[300px] md:h-[420px]",
-  },
-  {
-    src: "/images/arc-rome.jpg",
-    alt: "Arc de Constantin, Rome",
-    span: "md:col-span-4",
-    height: "h-[300px] md:h-[460px]",
-  },
-  {
-    src: "/images/cannes.jpeg",
-    alt: "Cannes, France",
-    span: "md:col-span-4",
-    height: "h-[300px] md:h-[460px]",
-  },
-  {
-    src: "/images/alyssia.jpg",
-    alt: "Portrait en lumière naturelle",
-    span: "md:col-span-4",
-    height: "h-[300px] md:h-[460px]",
-  },
+const GALLERY_META = [
+  { src: "/images/giza.jpg", span: "md:col-span-7", height: "h-[300px] md:h-[500px]" },
+  { src: "/images/pyramid.png", span: "md:col-span-5", height: "h-[300px] md:h-[500px]" },
+  { src: "/images/toutankamon.png", span: "md:col-span-5", height: "h-[300px] md:h-[420px]" },
+  { src: "/images/egypte-atterissage.png", span: "md:col-span-3", height: "h-[300px] md:h-[420px]" },
+  { src: "/images/colise.jpg", span: "md:col-span-4", height: "h-[300px] md:h-[420px]" },
+  { src: "/images/arc-rome.jpg", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
+  { src: "/images/cannes.jpeg", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
+  { src: "/images/alyssia.jpg", span: "md:col-span-4", height: "h-[300px] md:h-[460px]" },
 ];
 
 /* le procédé raconté par une vraie pièce : le loquet de portail,
    du croquis à l'objet monté */
-const MAKER_STEPS = [
-  {
-    title: "Imaginer",
-    text: "Partir d'un besoin réel (une pièce cassée, un accessoire introuvable) et poser l'idée sur le papier.",
-    src: "/images/sketch.png",
-    alt: "Croquis du loquet de portail à fabriquer",
-  },
-  {
-    title: "Modéliser",
-    text: "Passer du croquis au modèle 3D, au millimètre près, prêt à imprimer.",
-    src: "/images/bambu.png",
-    alt: "La pièce modélisée en 3D, prête à imprimer",
-  },
-  {
-    title: "Imprimer",
-    text: "Imprimer, tester, ajuster, jusqu'à ce que la pièce tienne parfaitement en place.",
-    src: "/images/pied-a-coulisse-2.jpg",
-    alt: "La pièce imprimée, montée et fonctionnelle sur le portail",
-  },
+const MAKER_STEPS_META = [
+  { src: "/images/sketch.png" },
+  { src: "/images/bambu.png" },
+  { src: "/images/pied-a-coulisse-2.jpg" },
 ];
 
-export default function Home() {
+/* photos-mots du manifeste — voir positionnement.paragraph dans les
+   dictionnaires pour le texte qui les entoure */
+const WORD_IMAGES = [
+  { src: "/images/obrado-logo.png", eager: true },
+  { src: "/images/iot.jpeg", position: "center 65%" },
+  { src: "/images/atelier.jpg" },
+];
+
+/* sources des photos de la timeline, alignées par index sur
+   dict.parcours.timeline (les alt textes, eux, sont traduits) */
+const TIMELINE_IMAGES: (string[] | undefined)[] = [
+  ["/images/cr-1.webp", "/images/cr-2.webp"],
+  undefined,
+  ["/images/adn-studio.png", "/images/debatium.png", "/images/les-ignobles.webp"],
+  undefined,
+  undefined,
+];
+
+export default async function Home(props: PageProps<"/[lang]">) {
+  const { lang } = await props.params;
+  if (!hasLocale(lang)) notFound();
+  const dict = await getDictionary(lang);
+  const SOCIALS = getSocials(dict.footer.phoneLabel);
+
   return (
     <div style={{ background: "var(--surface-page)", minHeight: "100vh" }}>
       <ScrollReveal />
-      <SiteHeader />
+      <SiteHeader lang={lang} dict={dict} />
 
       <main id="top" className="mx-auto max-w-[1180px] px-6 md:px-16">
         {/* ---------------- HERO ---------------- */}
@@ -234,17 +133,17 @@ export default function Home() {
               style={{ background: "var(--sage-200)" }}
             >
               <Image
-                src="/images/portrait.png"
+                src="/images/portrait.jpg"
                 alt="Portrait de Killian Boularand"
                 width={760}
                 height={1182}
                 preload
                 sizes="112px"
-                className="h-full w-full scale-110 object-cover object-top"
+                className="h-full scale-130 w-full object-cover object-top"
               />
             </div>
             <span className="k-hero-tag" aria-hidden>
-              Killian Boularand 👋
+              {dict.hero.greeting}
             </span>
           </div>
 
@@ -257,15 +156,14 @@ export default function Home() {
             }}
           >
             <span className="k-live-dot h-1.5 w-1.5 rounded-full" style={{ background: "var(--live-dot)" }} />
-            Disponible pour une alternance !
+            {dict.hero.available}
           </p>
 
           <h1
             className="k-hero-in k-display-1 mt-6 max-w-[16ch]"
             style={{ textWrap: "balance", ["--reveal-i" as string]: 2 }}
           >
-            Maker et{" "}
-            <span style={{ color: "var(--sage-700)" }}>passionné de tech</span>.
+            <Rich segments={dict.hero.title} />
           </h1>
 
           <p
@@ -277,8 +175,7 @@ export default function Home() {
               ["--reveal-i" as string]: 3,
             }}
           >
-            20 ans en Haute-Savoie. Design, hardware, impression 3D, logiciel
-            : je maîtrise chaque étape d&apos;un projet.
+            {dict.hero.subtitle}
           </p>
 
           <div
@@ -286,7 +183,7 @@ export default function Home() {
             style={{ ["--reveal-i" as string]: 4 }}
           >
             <a className="k-btn k-btn--lg" href="#projets">
-              Voir mes projets
+              {dict.hero.ctaProjects}
               <svg
                 width="14"
                 height="14"
@@ -308,7 +205,7 @@ export default function Home() {
               className="k-text-link"
               style={{ font: "600 14px/1 var(--font-body)", color: "var(--text-muted)" }}
             >
-              Mon CV en ligne ↗
+              {dict.hero.ctaCv}
             </a>
           </div>
         </section>
@@ -317,25 +214,26 @@ export default function Home() {
         {/* le manifeste : deux phrases en display-2, la seconde décalée à
             droite — un seul message, la polyvalence */}
         <section id="positionnement" className="k-section">
-          <SectionRule label="Positionnement" />
+          <SectionRule label={dict.positionnement.eyebrow} />
 
           <div className="k-reveal mt-12 md:mt-16" data-reveal>
             <h2 className="k-display-2 m-0 max-w-[22ch]" style={{ textWrap: "pretty" }}>
-              Être <span style={{ color: "var(--sage-700)" }}>polyvalent</span>, pour
-              répondre à n&apos;importe quel{" "}
-              <span style={{ color: "var(--sage-700)" }}>besoin</span>.
+              <Rich segments={dict.positionnement.heading} />
             </h2>
           </div>
 
           <div className="k-reveal mt-12 md:mt-16 md:ml-[30%]" data-reveal>
             <p className="k-display-2 m-0 max-w-[26ch]" style={{ textWrap: "pretty" }}>
-              Des interfaces{" "}
-              <span style={{ color: "var(--sage-700)" }}>digitales</span>
-              <WordImage src="/images/obrado.webp" position="top" eager revealIndex={0} /> au{" "}
-              <span style={{ color: "var(--sage-700)" }}>monde physique</span>&nbsp;:
-              objets connectés
-              <WordImage src="/images/iot.jpeg" position="center 65%" revealIndex={1} />, impression 3D
-              <WordImage src="/images/atelier.jpg" revealIndex={2} />.
+              {dict.positionnement.paragraph.before}
+              <span style={{ color: "var(--sage-700)" }}>{dict.positionnement.paragraph.accent1}</span>
+              <WordImage {...WORD_IMAGES[0]} revealIndex={0} />
+              {dict.positionnement.paragraph.betweenAccent1AndAccent2}
+              <span style={{ color: "var(--sage-700)" }}>{dict.positionnement.paragraph.accent2}</span>
+              {dict.positionnement.paragraph.afterAccent2}
+              <WordImage {...WORD_IMAGES[1]} revealIndex={1} />
+              {dict.positionnement.paragraph.betweenImg2AndImg3}
+              <WordImage {...WORD_IMAGES[2]} revealIndex={2} />
+              {dict.positionnement.paragraph.end}
             </p>
           </div>
 
@@ -372,12 +270,10 @@ export default function Home() {
               </g>
             </svg>
             <Eyebrow tone="accent" className="mt-4">
-              Le cap
+              {dict.positionnement.capEyebrow}
             </Eyebrow>
             <p className="k-heading mt-2.5 max-w-[36ch]" style={{ color: "var(--text-strong)" }}>
-              Un diplôme d&apos;ingénieur en{" "}
-              <span style={{ color: "var(--sage-700)" }}>logiciel embarqué</span>, pour
-              concevoir les systèmes qui font voler les avions.
+              <Rich segments={dict.positionnement.capText} />
             </p>
           </div>
         </section>
@@ -388,48 +284,43 @@ export default function Home() {
             sage-900 pour la nomination d'Obrado, faits + grammaire visuelle
             pleine largeur pour Éos. */}
         <section id="projets" className="k-section">
-          <SectionRule label="Projets phares" />
+          <SectionRule label={dict.projets.eyebrow} />
 
           {/* — Obrado : la preuve (nomination SWA) vit dans sa propre bande
               sombre, qui fait ressortir le logo blanc du Startup Weekend. */}
           <article className="k-reveal mt-12" data-reveal>
             <div className="grid items-center gap-10 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
               <div>
-                <Eyebrow>CTO &amp; cofondateur · depuis juin 2025</Eyebrow>
+                <Eyebrow>{dict.projets.obrado.eyebrow}</Eyebrow>
                 <h3 className="k-display-2 mt-6 max-w-[16ch]" style={{ textWrap: "balance" }}>
-                  <span style={{ color: "var(--sage-700)" }}>Obrado</span> remplace le CV
-                  par la preuve.
+                  <Rich segments={dict.projets.obrado.heading} />
                 </h3>
                 <p className="k-body-lg mt-6 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
-                  Un CV ne montre jamais ce qu&apos;on sait vraiment faire. Obrado le
-                  remplace par un profil-portfolio public : projets, compétences,
-                  contributions, vérifié par l&apos;école partenaire.
+                  {dict.projets.obrado.paragraph}
                 </p>
                 <p className="k-body-sm mt-5" style={{ color: "var(--text-muted)" }}>
-                  MVP en ligne · ~30 utilisateurs · école partenaire By CCI
+                  {dict.projets.obrado.meta}
                 </p>
-                <TechList
-                  className="mt-6"
-                  items={["Next.js 15", "React 19", "NestJS (DDD)", "PostgreSQL / Prisma", "AWS S3"]}
-                />
+                <TechList className="mt-6" items={dict.projets.obrado.tech} />
                 <ArrowLink href="https://obrado.app" className="mt-7">
-                  Voir Obrado →
+                  {dict.projets.obrado.link}
                 </ArrowLink>
               </div>
-              <Figure src="/images/obrado.webp" alt="Obrado, visuel produit" ratio="4 / 3" />
+              <Figure src="/images/obrado.webp" alt={dict.projets.obrado.figureAlt} ratio="4 / 3" />
             </div>
 
             {/* bande nomination — le logo blanc du Techstars Startup Weekend
                 pose sur le sage-900, à sa taille naturelle : la mise en avant
                 vient du cadre, pas de l'agrandissement */}
             <div
-              className="mt-6 grid overflow-hidden md:grid-cols-[1.05fr_0.95fr]"
+              className="k-reveal mt-6 grid overflow-hidden md:grid-cols-[1.05fr_0.95fr]"
+              data-reveal
               style={{ background: "var(--sage-900)", borderRadius: "var(--radius-surface)" }}
             >
               <div className="flex flex-col items-start justify-center p-8 md:p-12">
                 <Image
                   src="/images/SWA.svg"
-                  alt="Logo Techstars Startup Weekend"
+                  alt={dict.projets.obrado.nomination.logoAlt}
                   width={103}
                   height={52}
                   className="h-auto w-[128px]"
@@ -438,17 +329,16 @@ export default function Home() {
                   className="k-title-1 mt-8 mb-0 max-w-[20ch]"
                   style={{ color: "var(--paper)", textWrap: "balance" }}
                 >
-                  Nominé au Techstars Startup Weekend Annecy 2025.
+                  {dict.projets.obrado.nomination.heading}
                 </p>
                 <p className="k-body mt-4 mb-0 max-w-[42ch]" style={{ color: "var(--sage-200)" }}>
-                  54 heures pour lancer une entreprise : Obrado pitché sur scène, devant
-                  public et jury.
+                  {dict.projets.obrado.nomination.paragraph}
                 </p>
               </div>
               <div className="relative min-h-[280px] md:min-h-[400px]">
                 <Image
                   src="/images/startup-weekend.jpg"
-                  alt="Pitch d'Obrado sur la scène du Startup Weekend Annecy 2025"
+                  alt={dict.projets.obrado.nomination.imageAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, 45vw"
                   className="object-cover"
@@ -466,33 +356,22 @@ export default function Home() {
           <article className="k-reveal" data-reveal>
             <div className="grid items-center gap-10 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
               <div>
-                <Eyebrow>Projet de fin d&apos;année · DNMADE Numérique</Eyebrow>
+                <Eyebrow>{dict.projets.eos.eyebrow}</Eyebrow>
                 <h3 className="k-display-2 mt-6 max-w-[18ch]" style={{ textWrap: "balance" }}>
-                  <span style={{ color: "var(--sage-700)" }}>Éos</span> traduit le monde
-                  pour la vision qui reste.
+                  <Rich segments={dict.projets.eos.heading} />
                 </h3>
                 <p className="k-body-lg mt-6 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
-                  La DMLA, une maladie de l&apos;œil fréquente après 60 ans, efface le
-                  centre de la vision : lire ou reconnaître un visage devient impossible.
-                  Éos est un casque qui redessine le monde en formes simples et très
-                  contrastées, que la vision restante peut encore lire.
+                  {dict.projets.eos.paragraph}
                 </p>
                 <p className="k-body-sm mt-5" style={{ color: "var(--text-muted)" }}>
-                  Mon rôle : tout le développement technique du prototype.
+                  {dict.projets.eos.role}
                 </p>
-                <TechList
-                  className="mt-6"
-                  items={["Swift / iOS", "ARKit", "LiDAR", "CoreML", "Metal"]}
-                />
+                <TechList className="mt-6" items={dict.projets.eos.tech} />
                 <ArrowLink href="https://obrado.app/cto" className="mt-7">
-                  Le projet en détail →
+                  {dict.projets.eos.link}
                 </ArrowLink>
               </div>
-              <Figure
-                src="/images/eos-2.webp"
-                alt="Démonstration d'Éos : le prototype porté en salle, la scène 3D projetée à l'écran"
-                ratio="4 / 3"
-              />
+              <Figure src="/images/eos-2.webp" alt={dict.projets.eos.figureAlt} ratio="4 / 3" />
             </div>
 
             {/* trois faits entre deux hairlines — pas de cartes, juste l'info */}
@@ -503,22 +382,13 @@ export default function Home() {
                 borderBottom: "1px solid var(--border-default)",
               }}
             >
-              {[
-                {
-                  fact: "100 % on-device",
-                  detail: "Aucune image ne quitte l'iPhone : vie privée par conception.",
-                },
-                {
-                  fact: "iPhone 17 Pro",
-                  detail: "Porté dans un casque : caméra, LiDAR et IA embarquée.",
-                },
-                {
-                  fact: "Travail d'équipe",
-                  detail:
-                    "Designers et développeur réunis sur le projet de fin d'année de mon DNMADE Numérique.",
-                },
-              ].map((f) => (
-                <div key={f.fact}>
+              {dict.projets.eos.facts.map((f, i) => (
+                <div
+                  key={f.fact}
+                  className="k-gallery-figure"
+                  data-reveal
+                  style={{ ["--reveal-i" as string]: i }}
+                >
                   <p className="k-title-3 m-0">{f.fact}</p>
                   <p className="k-caption mt-1.5 mb-0" style={{ color: "var(--text-muted)" }}>
                     {f.detail}
@@ -531,10 +401,11 @@ export default function Home() {
                 16/9, jamais recadrée */}
             <Figure
               src="/images/eos-3.webp"
-              alt="La grammaire visuelle d'Éos : damiers pour les murs, triangle jaune pour le chemin libre"
+              alt={dict.projets.eos.grammarAlt}
               ratio="16 / 9"
               sizes="(max-width: 768px) 100vw, 1050px"
               className="mt-10"
+              reveal
             />
           </article>
         </section>
@@ -548,7 +419,7 @@ export default function Home() {
           >
             <div className="mx-auto max-w-[1180px] px-6 py-16 md:px-16 md:py-24">
               <SectionRule
-                label="Maker · Impression 3D & hardware"
+                label={dict.maker.sectionLabel}
                 labelColor="var(--sage-200)"
                 lineColor="rgba(247,245,238,0.24)"
               />
@@ -557,12 +428,10 @@ export default function Home() {
                 data-reveal
               >
                 <h2 className="k-display-3 m-0 max-w-[18ch]" style={{ color: "var(--paper)" }}>
-                  Une pièce cassée, un besoin précis : je la fabrique.
+                  {dict.maker.heading}
                 </h2>
                 <p className="k-body-lg m-0 max-w-[44ch]" style={{ color: "var(--sage-200)" }}>
-                  Un objet abîmé, un accessoire introuvable, une idée qui n&apos;existe
-                  encore nulle part : je fabrique la pièce exacte qui répond au besoin,
-                  du croquis à l&apos;objet fini.
+                  {dict.maker.paragraph}
                 </p>
               </div>
 
@@ -570,7 +439,7 @@ export default function Home() {
                   feuilles épinglées sur l'établi, une même pièce du croquis à
                   l'objet monté ; révélation en cascade via --reveal-i */}
               <div className="mt-12 grid gap-4 md:grid-cols-3 md:gap-5">
-                {MAKER_STEPS.map((step, i) => (
+                {dict.maker.steps.map((step, i) => (
                   <article
                     key={step.title}
                     className="k-gallery-figure flex flex-col p-6 md:p-7"
@@ -582,7 +451,7 @@ export default function Home() {
                     }}
                   >
                     <span className="k-label" style={{ color: "var(--sage-700)" }}>
-                      Étape 0{i + 1}
+                      {dict.maker.stepLabel} 0{i + 1}
                     </span>
                     <h3 className="k-title-1 mt-2 mb-0">{step.title}</h3>
                     <p
@@ -592,7 +461,7 @@ export default function Home() {
                       {step.text}
                     </p>
                     <Figure
-                      src={step.src}
+                      src={MAKER_STEPS_META[i].src}
                       alt={step.alt}
                       ratio="4 / 3"
                       sizes="(max-width: 768px) 100vw, 30vw"
@@ -608,101 +477,55 @@ export default function Home() {
         {/* ---------------- PARCOURS ---------------- */}
         {/* le tournant à gauche (sticky), timeline à points à droite */}
         <section id="parcours" className="k-section">
-          <SectionRule label="Parcours" />
+          <SectionRule label={dict.parcours.eyebrow} />
 
           <div
             className="k-reveal mt-12 grid items-start gap-12 md:grid-cols-[0.85fr_1.15fr] md:gap-20"
             data-reveal
           >
             <div className="md:sticky md:top-[104px]">
-              <Eyebrow tone="accent">Le tournant</Eyebrow>
-              <h2 className="k-display-3 mt-4 max-w-[14ch]">Pourquoi je change de cap</h2>
+              <Eyebrow tone="accent">{dict.parcours.tournantEyebrow}</Eyebrow>
+              <h2 className="k-display-3 mt-4 max-w-[14ch]">{dict.parcours.heading}</h2>
               <p className="k-body-lg mt-6 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
-                Le dev m&apos;a ouvert l&apos;entrepreneuriat et le concret de
-                l&apos;entreprise. Je veux maintenant un socle plus solide : un diplôme
-                d&apos;ingénieur, dans le domaine qui me passionne depuis toujours:
-                l&apos;aéronautique.
+                {dict.parcours.paragraph}
               </p>
               <ArrowLink href="https://obrado.app/cto" className="mt-7">
-                Mon parcours complet &amp; mon CV sur Obrado →
+                {dict.parcours.link}
               </ArrowLink>
             </div>
 
             <div>
-              <TimelineRow
-                period="Nov. 2025 → juin 2026"
-                title="ControlResell · Alternance frontend"
-              >
-                <p className="k-body mt-2.5 max-w-[58ch]" style={{ color: "var(--text-body)" }}>
-                  Responsable de l&apos;évolution du frontend React Web &amp; React Native :
-                  cohérence produit, expérience utilisateur, architecture du code.
-                </p>
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <Figure
-                    src="/images/cr-1.webp"
-                    alt="ControlResell, interface web"
-                    ratio="4 / 3"
-                    sizes="300px"
-                  />
-                  <Figure
-                    src="/images/cr-2.webp"
-                    alt="ControlResell, application mobile"
-                    ratio="4 / 3"
-                    sizes="300px"
-                  />
-                </div>
-              </TimelineRow>
-
-              <TimelineRow period="Depuis juin 2025" title="Obrado · CTO & cofondateur">
-                <p className="k-body mt-2.5 max-w-[58ch]" style={{ color: "var(--text-body)" }}>
-                  SaaS dédié à l&apos;alternance. MVP en ligne, ~30 utilisateurs. Nominé
-                  Startup Weekend Annecy 2025.
-                </p>
-              </TimelineRow>
-
-              <TimelineRow
-                period="Avr. 2025 → juil. 2026"
-                title="Freelance · Dev créatif / fullstack"
-              >
-                <p className="k-body mt-2.5 max-w-[58ch]" style={{ color: "var(--text-body)" }}>
-                  Landing pages, back-office et animations web pour des startups, comme Les
-                  Ignobles, et des artisans.
-                </p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <Figure
-                    src="/images/adn-studio.png"
-                    alt="ADN Studio by Nelly"
-                    ratio="16 / 10"
-                    sizes="200px"
-                  />
-                  <Figure src="/images/debatium.png" alt="Debatium" ratio="16 / 10" sizes="200px" />
-                  <Figure
-                    src="/images/les-ignobles.webp"
-                    alt="Les Ignobles"
-                    ratio="16 / 10"
-                    sizes="200px"
-                  />
-                </div>
-              </TimelineRow>
-
-              <TimelineRow
-                period="Sept. 2024 → juil. 2027"
-                title="DNMADE Numérique · L'École by CCI"
-              >
-                <p className="k-body mt-2.5 max-w-[58ch]" style={{ color: "var(--text-body)" }}>
-                  Bac+3 en dev et design web &amp; mobile, en cours. Une formation signée
-                  Gobelins Paris, sur son campus d&apos;Annecy : le code et le design
-                  enseignés ensemble.
-                </p>
-              </TimelineRow>
-
-              <TimelineRow period="2021 → 2024" title="Baccalauréat STI2D · Spé SIN" last>
-                <p className="k-body mt-2.5 max-w-[58ch]" style={{ color: "var(--text-body)" }}>
-                  Mention très bien. Le socle de ma culture d&apos;ingénierie et de
-                  développement durable : concevoir des solutions éthiques pour la planète,
-                  en alliant théorie et pratique sur mes premiers projets réels.
-                </p>
-              </TimelineRow>
+              {dict.parcours.timeline.map((entry, i) => (
+                <TimelineRow
+                  key={entry.title}
+                  period={entry.period}
+                  title={entry.title}
+                  last={i === dict.parcours.timeline.length - 1}
+                >
+                  <p className="k-body mt-2.5 max-w-[58ch]" style={{ color: "var(--text-body)" }}>
+                    {entry.description}
+                  </p>
+                  {entry.images ? (
+                    <div
+                      className={
+                        entry.images.length === 2
+                          ? "mt-5 grid grid-cols-2 gap-3"
+                          : "mt-5 grid gap-3 sm:grid-cols-3"
+                      }
+                    >
+                      {entry.images.map((alt, j) => (
+                        <Figure
+                          key={alt}
+                          src={TIMELINE_IMAGES[i]![j]}
+                          alt={alt}
+                          ratio={entry.images!.length === 2 ? "4 / 3" : "16 / 10"}
+                          sizes={entry.images!.length === 2 ? "300px" : "200px"}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+                </TimelineRow>
+              ))}
             </div>
           </div>
         </section>
@@ -710,15 +533,16 @@ export default function Home() {
         {/* ---------------- COMPÉTENCES ---------------- */}
         {/* quatre cartes 2x2 sur les surfaces du thème */}
         <section id="competences" className="k-section">
-          <SectionRule label="Compétences" />
-          <div className="k-reveal mt-10 grid gap-4 md:grid-cols-2 md:gap-5" data-reveal>
-            {SKILL_CARDS.map((card) => (
+          <SectionRule label={dict.competences.sectionLabel} />
+          <div className="mt-10 grid gap-4 md:grid-cols-2 md:gap-5">
+            {dict.competences.cards.map((card, i) => (
               <SkillCard
                 key={card.title}
-                icon={card.icon}
+                icon={SKILL_ICONS[i].icon}
                 title={card.title}
                 items={card.items}
-                background={card.background}
+                background={SKILL_ICONS[i].background}
+                revealIndex={i}
               />
             ))}
           </div>
@@ -727,36 +551,30 @@ export default function Home() {
         {/* ---------------- AVIATION ---------------- */}
         {/* texte à gauche, duo de portraits en quinconce à droite */}
         <section id="aviation" className="k-section">
-          <SectionRule label="Aviation & moi" />
+          <SectionRule label={dict.aviation.sectionLabel} />
           <div
             className="k-reveal mt-10 grid items-center gap-12 md:grid-cols-[0.9fr_1.1fr] md:gap-16"
             data-reveal
           >
             <div>
-              <h2 className="k-display-3 m-0 max-w-[18ch]">
-                Le fil rouge de toute ma réorientation
-              </h2>
+              <h2 className="k-display-3 m-0 max-w-[18ch]">{dict.aviation.heading}</h2>
               <p className="k-body-lg mt-6 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
-                Le baptême de l&apos;air, puis un vol en parapente au-dessus du lac
-                d&apos;Annecy : à chaque fois, la même évidence. C&apos;est en l&apos;air
-                que je me sens à ma place.
+                {dict.aviation.paragraph1}
               </p>
               <p className="k-body-lg mt-4 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
-                Le reste du temps, je simule des vols sur Flight Simulator et je me plonge
-                dans la géographie. Ce qui me porte, c&apos;est une idée simple :
-                l&apos;aviation relie les peuples.
+                {dict.aviation.paragraph2}
               </p>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5">
               <Figure
                 src="/images/parapente.jpeg"
-                alt="Vol en parapente biplace au-dessus du lac d'Annecy"
+                alt={dict.aviation.parapenteAlt}
                 ratio="3 / 4"
                 sizes="(max-width: 640px) 100vw, 320px"
               />
               <Figure
                 src="/images/batem.jpg"
-                alt="Baptême de l'air sur Pipistrel Velis Electro, piste d'Annecy"
+                alt={dict.aviation.batemAlt}
                 ratio="3 / 4"
                 sizes="(max-width: 640px) 100vw, 320px"
                 className="sm:mt-16"
@@ -767,28 +585,26 @@ export default function Home() {
 
         {/* ---------------- PHOTOGRAPHIE ---------------- */}
         <section id="photographie" className="k-section">
-          <SectionRule label="Photographie & voyages" />
+          <SectionRule label={dict.photographie.sectionLabel} />
           <div
             className="k-reveal mt-12 grid items-end gap-6 md:mt-16 md:grid-cols-[1.1fr_0.9fr] md:gap-16"
             data-reveal
           >
             <h2 className="k-display-3 m-0 max-w-[16ch]" style={{ textWrap: "pretty" }}>
-              Capturer l&apos;instant, en faire un souvenir
+              {dict.photographie.heading}
             </h2>
             <p className="k-body-lg m-0 max-w-[40ch]" style={{ color: "var(--text-body)" }}>
-              En voyage, j&apos;ai toujours l&apos;œil qui traîne. J&apos;aime saisir
-              ces instants et en garder de jolis souvenirs, de Gizeh à Rome,
-              jusqu&apos;à la Côte d&apos;Azur.
+              {dict.photographie.paragraph}
             </p>
           </div>
           {/* full-bleed : la section chaleur déborde du container */}
           <div className="relative left-1/2 mt-12 w-screen -translate-x-1/2 px-3 md:mt-16 md:px-6">
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-12 md:gap-4">
-              {GALLERY.map((p, i) => (
+              {GALLERY_META.map((p, i) => (
                 <Figure
                   key={p.src}
                   src={p.src}
-                  alt={p.alt}
+                  alt={dict.photographie.gallery[i]}
                   heightClass={p.height}
                   className={p.span}
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -804,7 +620,7 @@ export default function Home() {
       {/* ---------------- CONTACT — CTA ---------------- */}
       <section id="contact" className="k-section">
         <div className="mx-auto max-w-[1180px] px-6 md:px-16">
-          <SectionRule label="Contact" />
+          <SectionRule label={dict.contact.sectionLabel} />
           <div className="k-reveal mt-10 md:mt-14" data-reveal>
             <h2
               className="m-0"
@@ -815,19 +631,19 @@ export default function Home() {
                 textWrap: "balance",
               }}
             >
-              Mon profil vous intéresse ?
+              {dict.contact.headingLine1}
               <span className="block" style={{ color: "var(--ink-4)" }}>
-                Écrivons la suite.
+                {dict.contact.headingLine2}
               </span>
             </h2>
             <p className="k-body-lg mt-7 max-w-[52ch]" style={{ color: "var(--text-muted)" }}>
-              Alternance en ingénierie logicielle embarquée, disponible dès maintenant.
+              {dict.contact.paragraph}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-7">
               <a className="k-btn k-btn--lg" href="mailto:killian.boularand@icloud.com">
-                Me contacter →
+                {dict.contact.ctaContact}
               </a>
-              <ArrowLink href="https://obrado.app/cto">Mon CV complet →</ArrowLink>
+              <ArrowLink href="https://obrado.app/cto">{dict.contact.ctaCv}</ArrowLink>
             </div>
           </div>
         </div>
@@ -853,7 +669,7 @@ export default function Home() {
                 killian.boularand@icloud.com
               </a>
               <span className="k-caption" style={{ color: "rgba(247,245,238,0.56)" }}>
-                © Killian Boularand · 2026 · Annecy, Haute-Savoie
+                {dict.footer.copyright}
               </span>
             </div>
             <div className="flex items-center gap-3">

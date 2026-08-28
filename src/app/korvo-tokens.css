@@ -145,38 +145,70 @@ body {
     font: 600 14px / 1.2 var(--font-body);
   }
 
-  /* the one button — ink pill on paper; sage stays the link/detail accent */
+  /* le tracé — contour d'encre qui se remplit au survol, gauche vers droite,
+     comme le filet de .k-rule-draw sous chaque titre de section : le CTA
+     hérite du geste signature du site plutôt qu'un simple hover générique.
+     Le remplissage vit dans ::before pour ne jamais déborder le rayon pilule. */
   .k-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    border: 0;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1.5px solid var(--ink);
     border-radius: var(--radius-control);
-    background: var(--ink);
-    color: var(--paper);
+    background: transparent;
+    color: var(--ink);
     font: 600 15px / 1 var(--font-body);
-    padding: 16px 28px;
+    padding: 14.5px 26.5px;
     cursor: pointer;
-    transition: background-color var(--dur-fast) var(--ease-standard),
+    transition: color 320ms var(--ease-out-expo), border-color 320ms var(--ease-out-expo),
       transform var(--dur-fast) var(--ease-out-quart);
   }
+  .k-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 320ms var(--ease-out-expo);
+  }
   .k-btn:hover {
-    background: var(--sage-900);
     color: var(--paper);
+  }
+  .k-btn:hover::before {
+    transform: scaleX(1);
   }
   .k-btn:active {
     transform: scale(0.97);
   }
+  /* usage compact — le contour qui se trace demande de l'air pour se lire ;
+     en dessous de la taille par défaut on revient à la pilule pleine */
   .k-btn--sm {
+    border-width: 0;
+    background: var(--ink);
+    color: var(--paper);
     font-size: 13px;
     padding: 10px 18px;
+    transition: background-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-out-quart);
+  }
+  .k-btn--sm::before {
+    content: none;
+  }
+  .k-btn--sm:hover {
+    background: var(--sage-900);
+    color: var(--paper);
   }
   /* CTA hero — la seule taille large du site ; la flèche plonge vers les
      projets au survol, le mouvement dit « ça se passe plus bas » */
   .k-btn--lg {
     font-size: 16px;
-    padding: 18px 32px;
+    padding: 16.5px 30.5px;
   }
   .k-btn--lg svg {
     transition: transform var(--dur-fast) var(--ease-out-quart);
@@ -188,13 +220,15 @@ body {
     outline: none;
     box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--ink);
   }
-  /* paper pill for the inverse (deep sage) contact section */
+  /* variante encre inversée — même tracé, en paper sur le sage profond */
   .k-btn--inverse {
+    border-color: var(--paper);
+    color: var(--paper);
+  }
+  .k-btn--inverse::before {
     background: var(--paper);
-    color: var(--sage-900);
   }
   .k-btn--inverse:hover {
-    background: var(--paper-inset);
     color: var(--sage-900);
   }
   .k-btn--inverse:focus-visible {
@@ -280,25 +314,46 @@ body {
     padding-top: clamp(88px, 11vw, 150px);
   }
 
-  /* nav links — plain text, no underline until active. Inline styles can't
-     express :hover, so these states live here instead. The active indicator
-     is an inset box-shadow (not border-bottom) so padding-bottom stays
-     constant across states and the line can fade in without a layout jump. */
-  .k-nav-link {
+  /* en-tête — la règle 1px s'affirme dès que la page défile, seul signal
+     d'état ; pas d'ombre, pas de flou */
+  .k-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-faint);
+    transition: border-color 240ms var(--ease-standard);
+  }
+  .k-header[data-scrolled="true"] {
+    border-color: var(--border-strong);
+  }
+
+  /* switch de langue — deux libellés nus, la langue active soulignée d'un
+     filet sage 1px : le vocabulaire des liens actifs du sommaire, zéro chrome */
+  .k-lang {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .k-lang a {
+    display: inline-block;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: 700 12px / 1 var(--font-body);
+    letter-spacing: 0.09em;
+    padding: 0 0 4px;
     color: var(--text-muted);
-    padding-bottom: 3px;
+    text-decoration: none;
     box-shadow: inset 0 -1px 0 0 transparent;
     transition: color var(--dur-fast) var(--ease-standard),
       box-shadow 220ms var(--ease-out-quart);
   }
-  .k-nav-link:hover {
+  .k-lang a:hover {
     color: var(--text-strong);
   }
-  .k-nav-link[data-active="true"] {
+  .k-lang a[data-on="true"] {
     color: var(--text-strong);
     box-shadow: inset 0 -1px 0 0 var(--sage);
   }
-  .k-nav-link:focus-visible {
+  .k-lang a:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
     border-radius: 2px;
@@ -360,8 +415,8 @@ body {
      du cercle, comme une étiquette de colis ; hairline, pas d'ombre */
   .k-hero-tag {
     position: absolute;
-    top: 62%;
-    left: 100%;
+    top: 50%;
+    left: 85%;
     transform: translate(-18px, -50%) rotate(-6deg);
     white-space: nowrap;
     background: var(--paper-raised);
@@ -372,30 +427,60 @@ body {
     color: var(--text-strong);
   }
 
-  /* mobile nav panel */
+  /* bouton du sommaire — libellé + deux traits qui se croisent, même
+     vocabulaire que les filets 1px du reste du site */
   .k-menu-btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 2px;
     border: 0;
     background: transparent;
     color: var(--text-strong);
     cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   .k-menu-btn:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
     border-radius: 3px;
   }
-  .k-mobile-panel {
+  .k-menu-icon {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 14px;
+  }
+  .k-menu-icon span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 240ms var(--ease-out-quart);
+  }
+  .k-menu-icon span:first-child {
+    top: 4px;
+  }
+  .k-menu-icon span:last-child {
+    top: 9px;
+  }
+  .k-menu-btn[data-open="true"] .k-menu-icon span:first-child {
+    transform: translateY(2.25px) rotate(45deg);
+  }
+  .k-menu-btn[data-open="true"] .k-menu-icon span:last-child {
+    transform: translateY(-2.75px) rotate(-45deg);
+  }
+
+  /* sommaire — panneau papier plein écran sous l'en-tête, toutes tailles */
+  .k-index-panel {
     position: fixed;
     inset: 64px 0 0 0;
     z-index: 90;
     background: var(--surface-page);
     border-top: 1px solid var(--border-faint);
-    overflow-y: auto;
     opacity: 0;
     transform: translateY(-6px);
     visibility: hidden;
@@ -403,7 +488,7 @@ body {
     transition: opacity 200ms var(--ease-out-quart), transform 200ms var(--ease-out-quart),
       visibility 0s linear 200ms;
   }
-  .k-mobile-panel[data-open="true"] {
+  .k-index-panel[data-open="true"] {
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
@@ -411,14 +496,58 @@ body {
     transition: opacity 220ms var(--ease-out-quart), transform 220ms var(--ease-out-quart),
       visibility 0s linear 0s;
   }
-  .k-mobile-panel .k-nav-link {
+
+  /* entrées du sommaire — numéro en étiquette, titre en display, un filet
+     par ligne ; la section active passe son numéro au sage. Le titre glisse
+     légèrement au survol, seul mouvement du panneau. */
+  .k-index-link {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-faint);
+    font: 400 clamp(30px, 7.5vw, 42px) / 1.05 var(--font-display);
+    letter-spacing: -0.01em;
+    color: var(--text-strong);
+  }
+  .k-index-num {
+    font: 600 12px / 1 var(--font-body);
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .k-index-link:hover .k-index-num,
+  .k-index-link:active {
+    color: var(--sage-700);
+  }
+  .k-index-link[data-active="true"] .k-index-num {
+    color: var(--sage);
+  }
+  .k-index-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
+    border-radius: 2px;
+  }
+  @media (min-width: 1024px) {
+    .k-index-link {
+      font-size: 54px;
+      padding: 22px 0;
+      gap: 22px;
+    }
+    .k-index-num {
+      font-size: 13px;
+    }
+  }
+  .k-index-panel .k-index-link,
+  .k-index-panel .k-index-foot {
     opacity: 0;
     transform: translateY(-4px);
-    transition: color var(--dur-fast) var(--ease-standard), box-shadow 220ms var(--ease-out-quart),
+    transition: color var(--dur-fast) var(--ease-standard),
       opacity 260ms var(--ease-out-quart), transform 260ms var(--ease-out-quart);
     transition-delay: calc(var(--reveal-i, 0) * 40ms);
   }
-  .k-mobile-panel[data-open="true"] .k-nav-link {
+  .k-index-panel[data-open="true"] .k-index-link,
+  .k-index-panel[data-open="true"] .k-index-foot {
     opacity: 1;
     transform: translateY(0);
   }
@@ -513,6 +642,19 @@ body {
   .k-social:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--sage-900), 0 0 0 4px var(--paper);
+  }
+  /* variante encre-sur-papier — les mêmes pictos dans le sommaire */
+  .k-social--ink {
+    border-color: var(--border-default);
+    color: var(--text-strong);
+  }
+  .k-social--ink:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .k-social--ink:focus-visible {
+    box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--sage-200);
   }
 
   /* wordmark géant du footer — monte d'un cran à l'entrée dans le viewport,

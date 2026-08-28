@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
+import type { RichSegment } from "@/i18n/types";
 
 /* ------------------------------------------------------------------ *
  * Korvo — primitives de page. Une règle 1px fait le travail d'une
@@ -95,6 +96,30 @@ export function WordImage({
   );
 }
 
+/** Rend une phrase mixant texte simple et mots accentués (sage-700), sans
+ * imposer d'ordre de mots : chaque langue fournit ses propres segments. */
+export function Rich({
+  segments,
+  accentColor = "var(--sage-700)",
+}: {
+  segments: RichSegment[];
+  accentColor?: string;
+}) {
+  return (
+    <>
+      {segments.map((s, i) =>
+        s.accent ? (
+          <span key={i} style={{ color: accentColor }}>
+            {s.text}
+          </span>
+        ) : (
+          <span key={i}>{s.text}</span>
+        ),
+      )}
+    </>
+  );
+}
+
 export function ArrowLink({
   href,
   children,
@@ -173,7 +198,8 @@ export function TimelineRow({
 }) {
   return (
     <div
-      className={`relative pl-8 md:pl-10 ${last ? "pb-0" : "pb-12"}`}
+      className={`k-reveal relative pl-8 md:pl-10 ${last ? "pb-0" : "pb-12"}`}
+      data-reveal
       style={{ borderLeft: `1px solid ${last ? "transparent" : "var(--sage-200)"}` }}
     >
       <span
@@ -201,16 +227,21 @@ export function SkillCard({
   title,
   items,
   background,
+  revealIndex = 0,
 }: {
   icon: ReactNode;
   title: string;
   items: { label: string; level?: string }[];
   background: string;
+  revealIndex?: number;
 }) {
   return (
     <div
-      className="flex flex-col p-8 md:p-10"
-      style={{ background, borderRadius: "var(--radius-surface)" }}
+      className="k-gallery-figure flex flex-col p-8 md:p-10"
+      data-reveal
+      style={
+        { background, borderRadius: "var(--radius-surface)", "--reveal-i": revealIndex } as CSSProperties
+      }
     >
       <span
         aria-hidden
