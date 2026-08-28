@@ -367,7 +367,7 @@ export default async function Home(props: PageProps<"/[lang]">) {
                   {dict.projets.eos.role}
                 </p>
                 <TechList className="mt-6" items={dict.projets.eos.tech} />
-                <ArrowLink href="https://obrado.app/cto" className="mt-7">
+                <ArrowLink href="https://obrado.app/project/9943662420-eos-l-il-aveugle-percoit-encore" className="mt-7">
                   {dict.projets.eos.link}
                 </ArrowLink>
               </div>
