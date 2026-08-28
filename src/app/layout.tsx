@@ -24,7 +24,7 @@ const seasons = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Killian Boularand — Maker & tech enthusiast",
+  title: "Killian Boularand · Maker et passionné de tech",
   description:
     "Maker en réorientation vers l'ingénierie logicielle embarquée, aéronautique et spatial. Code, impression 3D, hardware. En recherche d'alternance.",
 };

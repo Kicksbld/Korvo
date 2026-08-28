@@ -196,7 +196,7 @@ const GALLERY = [
 const MAKER_STEPS = [
   {
     title: "Imaginer",
-    text: "Partir d'un besoin réel — une pièce cassée, un accessoire introuvable — et poser l'idée sur le papier.",
+    text: "Partir d'un besoin réel (une pièce cassée, un accessoire introuvable) et poser l'idée sur le papier.",
     src: "/images/sketch.png",
     alt: "Croquis du loquet de portail à fabriquer",
   },
@@ -208,7 +208,7 @@ const MAKER_STEPS = [
   },
   {
     title: "Imprimer",
-    text: "Imprimer, tester, ajuster — jusqu'à ce que la pièce tienne parfaitement en place.",
+    text: "Imprimer, tester, ajuster, jusqu'à ce que la pièce tienne parfaitement en place.",
     src: "/images/pied-a-coulisse-2.jpg",
     alt: "La pièce imprimée, montée et fonctionnelle sur le portail",
   },
@@ -257,15 +257,15 @@ export default function Home() {
             }}
           >
             <span className="k-live-dot h-1.5 w-1.5 rounded-full" style={{ background: "var(--live-dot)" }} />
-            Disponible pour une alternance · ingénierie logicielle embarquée
+            Disponible pour une alternance !
           </p>
 
           <h1
             className="k-hero-in k-display-1 mt-6 max-w-[16ch]"
             style={{ textWrap: "balance", ["--reveal-i" as string]: 2 }}
           >
-            Je transforme des idées en{" "}
-            <span style={{ color: "var(--sage-700)" }}>objets réels</span>.
+            Maker et{" "}
+            <span style={{ color: "var(--sage-700)" }}>passionné de tech</span>.
           </h1>
 
           <p
@@ -277,8 +277,8 @@ export default function Home() {
               ["--reveal-i" as string]: 3,
             }}
           >
-            Maker passionné par la tech, 20 ans en Haute-Savoie. Du code à la
-            pièce imprimée.
+            20 ans en Haute-Savoie. Design, hardware, impression 3D, logiciel
+            : je maîtrise chaque étape d&apos;un projet.
           </p>
 
           <div
@@ -308,7 +308,7 @@ export default function Home() {
               className="k-text-link"
               style={{ font: "600 14px/1 var(--font-body)", color: "var(--text-muted)" }}
             >
-              Mon portfolio ↗
+              Mon CV en ligne ↗
             </a>
           </div>
         </section>
@@ -383,76 +383,159 @@ export default function Home() {
         </section>
 
         {/* ---------------- PROJETS ---------------- */}
+        {/* deux cas d'étude sur la même structure éditoriale : texte à gauche,
+            visuel à droite, puis la pièce à conviction en dessous — bande
+            sage-900 pour la nomination d'Obrado, faits + grammaire visuelle
+            pleine largeur pour Éos. */}
         <section id="projets" className="k-section">
           <SectionRule label="Projets phares" />
 
-          <article
-            className="k-reveal mt-12 grid items-start gap-10 md:grid-cols-[0.85fr_1.15fr] md:gap-14"
-            data-reveal
-          >
-            <div>
-              <Eyebrow>CTO &amp; cofondateur · depuis juin 2025</Eyebrow>
-              <h3 className="k-title-1 mt-3.5">Obrado</h3>
-              <p className="k-heading mt-1.5">SaaS dédié à l&apos;alternance</p>
-              <p className="k-body mt-5 max-w-[44ch]" style={{ color: "var(--text-body)" }}>
-                Un CV ne montre jamais ce qu&apos;on sait vraiment faire. Obrado le
-                remplace par un profil-portfolio public, vérifié par l&apos;école
-                partenaire.
-              </p>
-              <p className="k-body-sm mt-5" style={{ color: "var(--text-muted)" }}>
-                MVP en ligne · ~30 utilisateurs · nominé Startup Weekend Annecy 2025
-              </p>
-              <TechList
-                className="mt-6"
-                items={["Next.js 15", "React 19", "NestJS (DDD)", "PostgreSQL / Prisma", "AWS S3"]}
-              />
-              <ArrowLink href="https://obrado.app" className="mt-7">
-                Voir Obrado →
-              </ArrowLink>
+          {/* — Obrado : la preuve (nomination SWA) vit dans sa propre bande
+              sombre, qui fait ressortir le logo blanc du Startup Weekend. */}
+          <article className="k-reveal mt-12" data-reveal>
+            <div className="grid items-center gap-10 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
+              <div>
+                <Eyebrow>CTO &amp; cofondateur · depuis juin 2025</Eyebrow>
+                <h3 className="k-display-2 mt-6 max-w-[16ch]" style={{ textWrap: "balance" }}>
+                  <span style={{ color: "var(--sage-700)" }}>Obrado</span> remplace le CV
+                  par la preuve.
+                </h3>
+                <p className="k-body-lg mt-6 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
+                  Un CV ne montre jamais ce qu&apos;on sait vraiment faire. Obrado le
+                  remplace par un profil-portfolio public : projets, compétences,
+                  contributions, vérifié par l&apos;école partenaire.
+                </p>
+                <p className="k-body-sm mt-5" style={{ color: "var(--text-muted)" }}>
+                  MVP en ligne · ~30 utilisateurs · école partenaire By CCI
+                </p>
+                <TechList
+                  className="mt-6"
+                  items={["Next.js 15", "React 19", "NestJS (DDD)", "PostgreSQL / Prisma", "AWS S3"]}
+                />
+                <ArrowLink href="https://obrado.app" className="mt-7">
+                  Voir Obrado →
+                </ArrowLink>
+              </div>
+              <Figure src="/images/obrado.webp" alt="Obrado, visuel produit" ratio="4 / 3" />
             </div>
 
-            <div className="flex flex-col gap-4">
-              <Figure src="/images/obrado.webp" alt="Obrado, visuel produit" ratio="4 / 3" />
-              <Figure
-                src="/images/startup-weekend.jpg"
-                alt="Nomination Startup Weekend Annecy 2025"
-                ratio="16 / 9"
-              />
+            {/* bande nomination — le logo blanc du Techstars Startup Weekend
+                pose sur le sage-900, à sa taille naturelle : la mise en avant
+                vient du cadre, pas de l'agrandissement */}
+            <div
+              className="mt-6 grid overflow-hidden md:grid-cols-[1.05fr_0.95fr]"
+              style={{ background: "var(--sage-900)", borderRadius: "var(--radius-surface)" }}
+            >
+              <div className="flex flex-col items-start justify-center p-8 md:p-12">
+                <Image
+                  src="/images/SWA.svg"
+                  alt="Logo Techstars Startup Weekend"
+                  width={103}
+                  height={52}
+                  className="h-auto w-[128px]"
+                />
+                <p
+                  className="k-title-1 mt-8 mb-0 max-w-[20ch]"
+                  style={{ color: "var(--paper)", textWrap: "balance" }}
+                >
+                  Nominé au Techstars Startup Weekend Annecy 2025.
+                </p>
+                <p className="k-body mt-4 mb-0 max-w-[42ch]" style={{ color: "var(--sage-200)" }}>
+                  54 heures pour lancer une entreprise : Obrado pitché sur scène, devant
+                  public et jury.
+                </p>
+              </div>
+              <div className="relative min-h-[280px] md:min-h-[400px]">
+                <Image
+                  src="/images/startup-weekend.jpg"
+                  alt="Pitch d'Obrado sur la scène du Startup Weekend Annecy 2025"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 45vw"
+                  className="object-cover"
+                  style={{ objectPosition: "center 32%" }}
+                />
+              </div>
             </div>
           </article>
 
-          <div className="my-16 h-px" style={{ background: "var(--border-default)" }} />
+          <div className="my-16 h-px md:my-20" style={{ background: "var(--border-default)" }} />
 
-          <article
-            className="k-reveal grid items-start gap-10 md:grid-cols-[0.85fr_1.15fr] md:gap-14"
-            data-reveal
-          >
-            <div>
-              <Eyebrow>Développement technique intégral · équipe de 5 · DNMADE</Eyebrow>
-              <h3 className="k-title-1 mt-3.5">Éos</h3>
-              <p className="k-heading mt-1.5">Assistance visuelle temps réel pour la DMLA</p>
-              <p className="k-body mt-5 max-w-[44ch]" style={{ color: "var(--text-body)" }}>
-                Un casque équipé d&apos;un iPhone 17 Pro traduit la scène en une carte
-                sémantique ultra-contrastée, lisible par la vision périphérique, la seule
-                partie de la rétine encore fonctionnelle en cas de DMLA. Traduire ce qui
-                reste visible, pas restaurer ce qui est perdu.
-              </p>
-              <p className="k-body-sm mt-5" style={{ color: "var(--text-muted)" }}>
-                Traitement 100 % on-device, privacy by design.
-              </p>
-              <TechList
-                className="mt-6"
-                items={["Swift / iOS", "ARKit", "LiDAR", "CoreML", "Metal"]}
+          {/* — Éos : même structure, adaptée au contenu — l'explication grand
+              public à gauche, la démo à droite, puis trois faits entre deux
+              hairlines et la grammaire visuelle entière, sans recadrage. */}
+          <article className="k-reveal" data-reveal>
+            <div className="grid items-center gap-10 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
+              <div>
+                <Eyebrow>Projet de fin d&apos;année · DNMADE Numérique</Eyebrow>
+                <h3 className="k-display-2 mt-6 max-w-[18ch]" style={{ textWrap: "balance" }}>
+                  <span style={{ color: "var(--sage-700)" }}>Éos</span> traduit le monde
+                  pour la vision qui reste.
+                </h3>
+                <p className="k-body-lg mt-6 max-w-[48ch]" style={{ color: "var(--text-body)" }}>
+                  La DMLA, une maladie de l&apos;œil fréquente après 60 ans, efface le
+                  centre de la vision : lire ou reconnaître un visage devient impossible.
+                  Éos est un casque qui redessine le monde en formes simples et très
+                  contrastées, que la vision restante peut encore lire.
+                </p>
+                <p className="k-body-sm mt-5" style={{ color: "var(--text-muted)" }}>
+                  Mon rôle : tout le développement technique du prototype.
+                </p>
+                <TechList
+                  className="mt-6"
+                  items={["Swift / iOS", "ARKit", "LiDAR", "CoreML", "Metal"]}
+                />
+                <ArrowLink href="https://obrado.app/cto" className="mt-7">
+                  Le projet en détail →
+                </ArrowLink>
+              </div>
+              <Figure
+                src="/images/eos-2.webp"
+                alt="Démonstration d'Éos : le prototype porté en salle, la scène 3D projetée à l'écran"
+                ratio="4 / 3"
               />
-              <ArrowLink href="https://obrado.app/cto" className="mt-7">
-                Détail du projet sur Obrado →
-              </ArrowLink>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <Figure src="/images/eos-2.webp" alt="Démonstration d'Éos en salle" ratio="16 / 10" />
-              <Figure src="/images/eos-3.webp" alt="Grammaire visuelle d'Éos" ratio="16 / 9" />
+            {/* trois faits entre deux hairlines — pas de cartes, juste l'info */}
+            <div
+              className="mt-12 grid gap-8 py-8 md:mt-14 md:grid-cols-3 md:gap-10"
+              style={{
+                borderTop: "1px solid var(--border-default)",
+                borderBottom: "1px solid var(--border-default)",
+              }}
+            >
+              {[
+                {
+                  fact: "100 % on-device",
+                  detail: "Aucune image ne quitte l'iPhone : vie privée par conception.",
+                },
+                {
+                  fact: "iPhone 17 Pro",
+                  detail: "Porté dans un casque : caméra, LiDAR et IA embarquée.",
+                },
+                {
+                  fact: "Travail d'équipe",
+                  detail:
+                    "Designers et développeur réunis sur le projet de fin d'année de mon DNMADE Numérique.",
+                },
+              ].map((f) => (
+                <div key={f.fact}>
+                  <p className="k-title-3 m-0">{f.fact}</p>
+                  <p className="k-caption mt-1.5 mb-0" style={{ color: "var(--text-muted)" }}>
+                    {f.detail}
+                  </p>
+                </div>
+              ))}
             </div>
+
+            {/* la planche de grammaire visuelle est un document : ratio natif
+                16/9, jamais recadrée */}
+            <Figure
+              src="/images/eos-3.webp"
+              alt="La grammaire visuelle d'Éos : damiers pour les murs, triangle jaune pour le chemin libre"
+              ratio="16 / 9"
+              sizes="(max-width: 768px) 100vw, 1050px"
+              className="mt-10"
+            />
           </article>
         </section>
 
@@ -770,7 +853,7 @@ export default function Home() {
                 killian.boularand@icloud.com
               </a>
               <span className="k-caption" style={{ color: "rgba(247,245,238,0.56)" }}>
-                © Killian Boularand · 2026 — Annecy, Haute-Savoie
+                © Killian Boularand · 2026 · Annecy, Haute-Savoie
               </span>
             </div>
             <div className="flex items-center gap-3">
