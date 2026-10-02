@@ -4,7 +4,7 @@ const fr: Dictionary = {
   meta: {
     title: "Killian Boularand · Maker et passionné de tech",
     description:
-      "Maker en réorientation vers l'ingénierie logicielle embarquée, aéronautique et spatial. Code, impression 3D, hardware. En recherche d'alternance.",
+      "Maker polyvalent : développement web, design d'interfaces, impression 3D et hardware. Basé en Haute-Savoie, en recherche d'alternance.",
     tagline: "Maker, passionné de tech et d'innovation",
     jobTitle: "Maker",
   },
@@ -34,7 +34,7 @@ const fr: Dictionary = {
       { text: "." },
     ],
     subtitle:
-      "20 ans en Haute-Savoie. Design, hardware, impression 3D, logiciel : je maîtrise chaque étape d'un projet.",
+      "20 ans, basé en Haute-Savoie. Design, hardware, impression 3D, logiciel : je maîtrise chaque étape d'un projet.",
     ctaProjects: "Voir mes projets",
     ctaCv: "Mon CV en ligne ↗",
   },
@@ -56,11 +56,13 @@ const fr: Dictionary = {
       betweenImg2AndImg3: ", impression 3D",
       end: ".",
     },
-    capEyebrow: "Le cap",
+    capEyebrow: "Ce qui me motive",
     capText: [
-      { text: "Un diplôme d'ingénieur en " },
-      { text: "logiciel embarqué", accent: true },
-      { text: ", pour concevoir les systèmes qui font voler les avions." },
+      { text: "Faire passer une idée du " },
+      { text: "digital", accent: true },
+      { text: " au " },
+      { text: "physique", accent: true },
+      { text: ", pour répondre à un besoin réel." },
     ],
   },
   projets: {
@@ -141,10 +143,10 @@ const fr: Dictionary = {
   },
   parcours: {
     eyebrow: "Parcours",
-    tournantEyebrow: "Le tournant",
-    heading: "Pourquoi je change de cap",
+    tournantEyebrow: "Le déclic",
+    heading: "Apprendre en entreprenant",
     paragraph:
-      "Le dev m'a ouvert l'entrepreneuriat et le concret de l'entreprise. Je veux maintenant un socle plus solide : un diplôme d'ingénieur, dans le domaine qui me passionne depuis toujours: l'aéronautique.",
+      "Le dev m'a ouvert l'entrepreneuriat et le concret de l'entreprise : des clients, des délais, des produits en ligne. Je veux continuer à apprendre sur le terrain, au sein d'une équipe.",
     link: "Mon parcours complet & mon CV sur Obrado →",
     timeline: [
       {
@@ -218,7 +220,7 @@ const fr: Dictionary = {
   },
   aviation: {
     sectionLabel: "Aviation & moi",
-    heading: "Le fil rouge de toute ma réorientation",
+    heading: "Une passion qui ne m'a jamais quitté",
     paragraph1:
       "Le baptême de l'air, puis un vol en parapente au-dessus du lac d'Annecy : à chaque fois, la même évidence. C'est en l'air que je me sens à ma place.",
     paragraph2:
@@ -246,7 +248,7 @@ const fr: Dictionary = {
     sectionLabel: "Contact",
     headingLine1: "Mon profil vous intéresse ?",
     headingLine2: "Écrivons la suite.",
-    paragraph: "Alternance en ingénierie logicielle embarquée, disponible dès maintenant.",
+    paragraph: "En recherche d'alternance, disponible dès le 19 octobre 2026, une semaine sur deux.",
     ctaContact: "Me contacter →",
     ctaCv: "Mon CV complet →",
   },

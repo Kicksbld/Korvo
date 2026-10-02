@@ -5,7 +5,7 @@ const en: Dictionary = {
   meta: {
     title: "Killian Boularand · Maker & tech enthusiast",
     description:
-      "Maker transitioning into embedded software engineering, aerospace and aeronautics. Code, 3D printing, hardware. Currently looking for an apprenticeship.",
+      "Versatile maker: web development, interface design, 3D printing and hardware. Based in Haute-Savoie, France, looking for an apprenticeship.",
     tagline: "Maker, passionate about tech and innovation",
     jobTitle: "Maker",
   },
@@ -57,11 +57,13 @@ const en: Dictionary = {
       betweenImg2AndImg3: ", 3D printing",
       end: ".",
     },
-    capEyebrow: "The heading",
+    capEyebrow: "What motivates me",
     capText: [
-      { text: "An engineering degree in " },
-      { text: "embedded software", accent: true },
-      { text: ", to design the systems that keep aircraft flying." },
+      { text: "Taking an idea from " },
+      { text: "digital", accent: true },
+      { text: " to " },
+      { text: "physical", accent: true },
+      { text: ", to answer a real need." },
     ],
   },
   projets: {
@@ -141,10 +143,10 @@ const en: Dictionary = {
   },
   parcours: {
     eyebrow: "Journey",
-    tournantEyebrow: "The turning point",
-    heading: "Why I'm changing course",
+    tournantEyebrow: "The spark",
+    heading: "Learning by building a business",
     paragraph:
-      "Dev work opened the door to entrepreneurship and the reality of running a company. Now I want a stronger foundation: an engineering degree, in the field I've always been passionate about — aeronautics.",
+      "Dev work opened the door to entrepreneurship and the reality of running a company: clients, deadlines, products that go live. I want to keep learning on the job, as part of a team.",
     link: "My full journey & résumé on Obrado →",
     timeline: [
       {
@@ -218,7 +220,7 @@ const en: Dictionary = {
   },
   aviation: {
     sectionLabel: "Aviation & me",
-    heading: "The common thread through my whole career change",
+    heading: "A passion that has never left me",
     paragraph1:
       "A first flight, then paragliding over Lake Annecy: every time, the same certainty. I feel like I belong in the air.",
     paragraph2:
@@ -246,7 +248,7 @@ const en: Dictionary = {
     sectionLabel: "Contact",
     headingLine1: "Interested in my profile?",
     headingLine2: "Let's write what's next.",
-    paragraph: "Apprenticeship in embedded software engineering, available now.",
+    paragraph: "Looking for an apprenticeship, available from October 19, 2026, every other week.",
     ctaContact: "Get in touch →",
     ctaCv: "My full résumé →",
   },
