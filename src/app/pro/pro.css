@@ -1,0 +1,35 @@
+/* Feuille d'entrée de la page pro. Importée uniquement par
+   src/app/pro/[lang]/layout.tsx : aucun style du portfolio (globals.css,
+   korvo-tokens.css) n'est chargé ici, et inversement.
+
+   source(none) + @source : Tailwind ne scanne que le code de la page pro,
+   ce qui garde la feuille légère et évite d'y générer les classes du
+   portfolio. */
+@import "tailwindcss" source(none);
+@source "../../components/pro";
+@source "./";
+
+@import "./pro-tokens.css";
+
+@layer base {
+  html {
+    background-color: var(--pro-paper);
+    color: var(--pro-ink);
+    font-family: var(--pro-font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--pro-ochre-soft);
+    color: var(--pro-ink);
+  }
+
+  /* currentColor : contraste garanti sur fond clair comme sur fond sombre
+     (l'ocre passerait mal sur la sauge). */
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+}
