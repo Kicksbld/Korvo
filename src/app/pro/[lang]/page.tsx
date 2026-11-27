@@ -1,12 +1,24 @@
 import { notFound } from "next/navigation";
 import { hasLocale } from "@/i18n/config";
-import { Button, Container, LangSwitch, Logo, TextLink } from "@/components/pro";
+import { BarreFixeMobile } from "@/components/pro/sections/BarreFixeMobile";
+import { Contact } from "@/components/pro/sections/Contact";
+import { DemoAssistant } from "@/components/pro/sections/DemoAssistant";
+import { Faq } from "@/components/pro/sections/Faq";
+import { Footer } from "@/components/pro/sections/Footer";
+import { Header } from "@/components/pro/sections/Header";
+import { Hero } from "@/components/pro/sections/Hero";
+import { Offres } from "@/components/pro/sections/Offres";
+import { Processus } from "@/components/pro/sections/Processus";
+import { QuiJeSuis } from "@/components/pro/sections/QuiJeSuis";
+import { Realisations } from "@/components/pro/sections/Realisations";
+import { ToutResteAVous } from "@/components/pro/sections/ToutResteAVous";
 import { getProContent } from "../content";
-import { PORTFOLIO_URL, proPath } from "../urls";
+import { BOOKING_HREF } from "../urls";
 
-/* Page pro — phase 1 : socle seulement (papier texturé, polices, barre du
-   haut et texte du hero composés avec les primitives). Les sections de la
-   maquette arrivent en phase 2. */
+/* Page pro — phase 2 : intégration statique, section par section, dans
+   l'ordre de la maquette (docs/dev-page-pro.md §3). Aucune animation ici
+   (phase 3). Chaque section pose sa déchirure en haut quand la couleur
+   change avec la précédente. */
 
 export default async function ProPage(props: PageProps<"/pro/[lang]">) {
   const { lang } = await props.params;
@@ -14,48 +26,21 @@ export default async function ProPage(props: PageProps<"/pro/[lang]">) {
   const t = await getProContent(lang);
 
   return (
-    <div className="paper-texture min-h-dvh bg-paper">
-      <header>
-        <Container className="flex h-16 items-center justify-between md:h-20">
-          <a href={proPath(lang)} aria-label={t.header.homeLabel}>
-            <Logo />
-          </a>
-          <div className="flex items-center gap-2 md:gap-6">
-            <LangSwitch
-              current={lang}
-              hrefs={{ fr: proPath("fr"), en: proPath("en") }}
-              label={t.header.langLabel}
-              names={t.header.langNames}
-            />
-            <TextLink href={PORTFOLIO_URL} external srHint={t.header.portfolio.external}>
-              <span className="hidden md:inline">{t.header.portfolio.label}</span>
-              <span className="md:hidden">{t.header.portfolio.labelShort}</span>
-            </TextLink>
-            <Button size="sm" href="#contact" className="hidden md:inline-flex">
-              {t.header.bookCall}
-            </Button>
-          </div>
-        </Container>
-      </header>
-
+    <div className="relative">
+      <Header lang={lang} t={t.header} />
       <main>
-        <Container className="flex flex-col items-center gap-7 pt-12 pb-24 text-center md:pt-[72px]">
-          <p className="body-md text-ink-2">{t.hero.kicker}</p>
-          <h1 className="display-mobile-xl md:display-xl max-w-[1100px]">
-            {t.hero.title[0]}
-            <br />
-            {t.hero.title[1]}
-            <span className="text-bronze">.</span>
-          </h1>
-          <p className="body-md md:body-lg max-w-[640px] text-ink-2">{t.hero.subtitle}</p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button href="#contact">{t.hero.ctaPrimary}</Button>
-            <Button href="#offres" variant="outline">
-              {t.hero.ctaSecondary}
-            </Button>
-          </div>
-        </Container>
+        <Hero t={t.hero} />
+        <Offres t={t.offers} />
+        <Realisations t={t.work} />
+        <DemoAssistant t={t.demo} />
+        <ToutResteAVous t={t.keys} />
+        <Processus t={t.process} ctaHref={BOOKING_HREF} />
+        <QuiJeSuis t={t.about} ctaHref={BOOKING_HREF} />
+        <Faq t={t.faq} ctaHref={BOOKING_HREF} />
+        <Contact t={t.contact} />
       </main>
+      <Footer lang={lang} t={t.footer} />
+      <BarreFixeMobile t={t.mobileBar} />
     </div>
   );
 }

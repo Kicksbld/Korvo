@@ -10,7 +10,7 @@ import { cx } from "./cx";
    qui l'utilise affiche le panneau correspondant et lui donne l'id
    `${idPrefix}-panel-${value}`. Flèches gauche/droite, Début/Fin.
    Contrôlé (`value` + `onChange`) ou non (`defaultValue`). La pastille qui
-   glisse arrive en phase 3. */
+   glisse arrive en phase 3. En mobile, la liste prend toute la largeur. */
 
 export type TabItem<V extends string> = { value: V; label: string; icon?: ReactNode };
 
@@ -55,7 +55,7 @@ export function Tabs<V extends string>({ items, value, defaultValue, onChange, l
     <div
       role="tablist"
       aria-label={label}
-      className={cx("inline-flex gap-1.5 rounded-pill bg-forest p-1.5", className)}
+      className={cx("flex max-w-full gap-1.5 rounded-pill bg-forest p-1.5 md:inline-flex", className)}
     >
       {items.map((item, index) => {
         const selected = item.value === current;
@@ -74,7 +74,10 @@ export function Tabs<V extends string>({ items, value, defaultValue, onChange, l
             onClick={() => select(item.value)}
             onKeyDown={(event) => onKeyDown(event, index)}
             className={cx(
-              "flex min-h-11 items-center gap-2 whitespace-nowrap rounded-pill px-[26px] py-3.5 ui-button",
+              // Mobile (maquette 390) : 14 px, padding resserré, les libellés
+              // peuvent passer sur deux lignes sur les très petits écrans.
+              "flex min-h-11 flex-auto items-center justify-center gap-2 rounded-pill px-4 py-[13px] text-left ui-small",
+              "md:flex-none md:whitespace-nowrap md:px-[26px] md:py-3.5 md:ui-button",
               "transition-[background-color,color] duration-150 ease-out",
               selected ? "bg-forest-2 text-paper" : "text-sage-200 hover:text-paper",
             )}

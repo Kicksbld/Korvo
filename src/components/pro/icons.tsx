@@ -93,3 +93,77 @@ export function GiftIcon({ size = 15, ...props }: IconProps) {
     </svg>
   );
 }
+
+/** Fermeture du volet de l'assistant (14 px). */
+export function CloseIcon({ size = 14, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 14, props)}>
+      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Envoi d'un message à l'assistant (18 px). */
+export function SendIcon({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 18, props)}>
+      <path d="M9 14V4M13.5 8.5L9 4L4.5 8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Petite coche des engagements, dans une pastille (14 px). */
+export function CheckSmallIcon({ size = 14, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 14, props)}>
+      <path d="M2.625 7.4375L5.25 10.0625L11.375 3.9375" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** « + » de la FAQ (16 px). */
+export function PlusIcon({ size = 16, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 16, props)}>
+      <path d="M8 3.2V12.8M3.2 8H12.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** « − » de la FAQ, question ouverte (16 px). */
+export function MinusIcon({ size = 16, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 16, props)}>
+      <path d="M3.2 8H12.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** WhatsApp (bulle + combiné) des liens de contact (18 px). */
+export function WhatsAppIcon({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 18, props)}>
+      <path
+        d="M5.925 15C7.35643 15.7343 9.00306 15.9332 10.5682 15.5608C12.1333 15.1885 13.5139 14.2694 14.4613 12.9691C15.4087 11.6689 15.8606 10.073 15.7354 8.46912C15.6103 6.86521 14.9164 5.35873 13.7789 4.22114C12.6413 3.08356 11.1348 2.38969 9.53088 2.26456C7.92697 2.13944 6.3311 2.59129 5.03087 3.53869C3.73063 4.48609 2.81152 5.86673 2.43917 7.43183C2.06682 8.99694 2.26571 10.6436 3 12.075L1.5 16.5L5.925 15Z"
+        stroke="currentColor"
+        strokeWidth="1.41667"
+        strokeLinejoin="round"
+      />
+      <path d="M6.75 7.125C6.975 8.55 8.7 10.275 10.125 10.5L10.875 9.6L12.225 10.275" stroke="currentColor" strokeWidth="1.16667" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Enveloppe des liens de contact (18 px). */
+export function MailIcon({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, 18, props)}>
+      <path
+        d="M4.125 3.75H13.875C14.9105 3.75 15.75 4.58947 15.75 5.625V12.375C15.75 13.4105 14.9105 14.25 13.875 14.25H4.125C3.08947 14.25 2.25 13.4105 2.25 12.375V5.625C2.25 4.58947 3.08947 3.75 4.125 3.75Z"
+        stroke="currentColor"
+        strokeWidth="1.33333"
+      />
+      <path d="M3 5.25L9 9.75L15 5.25" stroke="currentColor" strokeWidth="1.33333" strokeLinejoin="round" />
+    </svg>
+  );
+}
