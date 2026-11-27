@@ -54,7 +54,7 @@ export function SegmentedToggle<V extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={cx("inline-flex gap-1 rounded-pill border border-border-faint bg-paper-inset p-1", className)}
+      className={cx("flex w-full gap-1 rounded-pill border border-border-faint bg-paper-inset p-1 md:inline-flex md:w-auto", className)}
     >
       {options.map((option, index) => {
         const checked = option.value === current;
@@ -71,7 +71,9 @@ export function SegmentedToggle<V extends string>({
             onClick={() => select(option.value)}
             onKeyDown={(event) => onKeyDown(event, index)}
             className={cx(
-              "flex h-10 items-center justify-center whitespace-nowrap rounded-pill px-[18px] ui-small",
+              // Mobile : segments égaux de 44 px de haut (cible tactile) ;
+              // desktop : 40 px, largeur du libellé.
+              "flex h-11 flex-1 items-center justify-center whitespace-nowrap rounded-pill px-[18px] ui-small md:h-10 md:flex-none",
               "transition-[background-color,box-shadow,color] duration-150 ease-out",
               checked ? "bg-paper-raised text-ink shadow-toggle" : "text-ink-2 hover:text-ink",
             )}

@@ -17,3 +17,9 @@ export function proPath(lang: Locale, path = ""): string {
   if (lang === "fr") return `/${clean}`;
   return clean ? `/en/${clean}` : "/en";
 }
+
+/* Liens de contact — branchés en phase 4 (Cal.com, WhatsApp, e-mail).
+   En attendant, ils mènent à la section Contact. */
+export const BOOKING_HREF = "#contact";
+export const WHATSAPP_HREF = "#contact";
+export const EMAIL_HREF = "#contact";
