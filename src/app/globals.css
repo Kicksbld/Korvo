@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* La page pro (src/app/pro, src/components/pro) a sa propre feuille : on
+   l'exclut du scan pour ne pas générer ses classes dans celle du portfolio. */
+@source not "./pro";
+@source not "../components/pro";
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

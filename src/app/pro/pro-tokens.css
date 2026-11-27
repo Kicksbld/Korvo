@@ -1,0 +1,295 @@
+/* Page pro Korvo — design tokens.
+   Source : variables Figma « Korvo » (maquette v2, fichier Personal Brand).
+   Tout est préfixé --pro- : ce fichier ne cohabite jamais avec
+   korvo-tokens.css (deux mises en page racines distinctes), mais le préfixe
+   évite toute ambiguïté en lisant le code. */
+
+:root {
+  /* — Papiers — */
+  --pro-paper: #f7f5ee;
+  --pro-paper-raised: #fffdf7;
+  --pro-paper-sunken: #f1eee5;
+  --pro-paper-inset: #eae6da;
+  --pro-paper-aged: #f0e8d6;
+
+  /* — Encres — --pro-ink-4 n'existe volontairement pas : #9c9a92 ne passe
+     pas le contraste minimal pour du texte (2,58:1 sur le papier). */
+  --pro-ink: #000000;
+  --pro-ink-2: #33322e;
+  --pro-ink-3: #6f6d66;
+
+  /* — Sauge — */
+  --pro-sage: #666d57;
+  --pro-sage-700: #545a47;
+  --pro-sage-900: #3f4335;
+  --pro-sage-400: #8b9078;
+  --pro-sage-200: #c7c9bc;
+  --pro-sage-050: #eeede5;
+
+  /* — Vert forêt — */
+  --pro-forest: #2b2f24;
+  --pro-forest-2: #363b2d;
+  /* Fond exact de la gravure des montagnes : le pied de page s'y fond. */
+  --pro-footer: #272f1d;
+
+  /* — Ocre, bronze, sépia — */
+  --pro-ochre: #996624;
+  --pro-ochre-soft: #eddebf;
+  --pro-bronze: #8c6a2a;
+  --pro-sepia: #4a3b26;
+
+  /* — Bordures — */
+  --pro-border-faint: #e3e2de;
+  --pro-border-default: #d0d0ce;
+  --pro-border-strong: #bbb5a7;
+
+  /* — Ombres : toujours chaudes, jamais grises — */
+  --pro-shadow-toggle: 0 2px 8px rgb(51 41 20 / 0.1);
+  --pro-shadow-tag: 0 8px 18px rgb(64 51 26 / 0.12);
+  --pro-shadow-card: 0 14px 30px rgb(51 41 20 / 0.12);
+  --pro-shadow-panel: 0 12px 32px rgb(26 26 13 / 0.1);
+  --pro-shadow-photo: 0 20px 40px rgb(51 41 20 / 0.18);
+
+  /* — Rayons — */
+  --pro-radius-pill: 999px;
+  --pro-radius-image: 14px;
+  --pro-radius-tag: 12px;
+  --pro-radius-card: 18px;
+  --pro-radius-card-lg: 20px;
+  --pro-radius-surface: 28px;
+
+  /* — Rythme — */
+  --pro-gutter: 20px; /* marges latérales mobile */
+  --pro-section-y: 80px; /* 72–88 px en mobile */
+  --pro-content-max: 1312px;
+
+  /* — Matières — */
+  --pro-paper-image: url("/pro/textures/papier.webp");
+  --pro-grain-image: url("/pro/textures/grain.webp");
+
+  /* — Polices (variables posées par next/font dans le layout) — */
+  --pro-font-display: var(--font-pro-display), "Fraunces", Georgia, serif;
+  --pro-font-body: var(--font-pro-body), "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --pro-font-hand: var(--font-pro-hand), "Caveat", cursive;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --pro-gutter: 64px;
+    --pro-section-y: 120px;
+  }
+}
+
+/* Tokens exposés à Tailwind sans recréer de variables (--color-paper, etc.) :
+   les classes bg-paper, text-ink… lisent directement les --pro-*. */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-paper: var(--pro-paper);
+  --color-paper-raised: var(--pro-paper-raised);
+  --color-paper-sunken: var(--pro-paper-sunken);
+  --color-paper-inset: var(--pro-paper-inset);
+  --color-paper-aged: var(--pro-paper-aged);
+  --color-ink: var(--pro-ink);
+  --color-ink-2: var(--pro-ink-2);
+  --color-ink-3: var(--pro-ink-3);
+  --color-sage: var(--pro-sage);
+  --color-sage-700: var(--pro-sage-700);
+  --color-sage-900: var(--pro-sage-900);
+  --color-sage-400: var(--pro-sage-400);
+  --color-sage-200: var(--pro-sage-200);
+  --color-sage-050: var(--pro-sage-050);
+  --color-forest: var(--pro-forest);
+  --color-forest-2: var(--pro-forest-2);
+  --color-footer: var(--pro-footer);
+  --color-ochre: var(--pro-ochre);
+  --color-ochre-soft: var(--pro-ochre-soft);
+  --color-bronze: var(--pro-bronze);
+  --color-sepia: var(--pro-sepia);
+  --color-border-faint: var(--pro-border-faint);
+  --color-border-default: var(--pro-border-default);
+  --color-border-strong: var(--pro-border-strong);
+
+  --font-*: initial;
+  --font-display: var(--pro-font-display);
+  --font-body: var(--pro-font-body);
+  --font-hand: var(--pro-font-hand);
+
+  --radius-pill: var(--pro-radius-pill);
+  --radius-image: var(--pro-radius-image);
+  --radius-tag: var(--pro-radius-tag);
+  --radius-card: var(--pro-radius-card);
+  --radius-card-lg: var(--pro-radius-card-lg);
+  --radius-surface: var(--pro-radius-surface);
+
+  --shadow-*: initial;
+  --shadow-toggle: var(--pro-shadow-toggle);
+  --shadow-tag: var(--pro-shadow-tag);
+  --shadow-card: var(--pro-shadow-card);
+  --shadow-panel: var(--pro-shadow-panel);
+  --shadow-photo: var(--pro-shadow-photo);
+
+  --spacing-gutter: var(--pro-gutter);
+  --spacing-section: var(--pro-section-y);
+  --container-content: var(--pro-content-max);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Rôles typographiques (styles de texte Figma).
+   Desktop et mobile sont des rôles distincts : on écrit par exemple
+   `display-mobile-l md:display-m` pour un titre de section.
+   ───────────────────────────────────────────────────────────── */
+
+@utility display {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  /* Réglages Figma de Fraunces : SOFT 0, WONK 1. Le taille optique (opsz)
+     suit la taille du texte, comme dans Figma. */
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-optical-sizing: auto;
+}
+
+@utility display-xl {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 100px;
+  line-height: 100px;
+  letter-spacing: -0.03em;
+}
+@utility display-l {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 76px;
+  line-height: 80px;
+  letter-spacing: -0.025em;
+}
+@utility display-m {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 56px;
+  line-height: 62px;
+  letter-spacing: -0.02em;
+}
+@utility display-s {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 40px;
+  line-height: 46px;
+  letter-spacing: -0.015em;
+}
+@utility display-xs {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 28px;
+  line-height: 34px;
+  letter-spacing: -0.01em;
+}
+@utility display-mobile-xl {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 48px;
+  line-height: 50px;
+  letter-spacing: -0.025em;
+}
+@utility display-mobile-l {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 36px;
+  line-height: 40px;
+  letter-spacing: -0.02em;
+}
+@utility display-mobile-m {
+  font-family: var(--pro-font-display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 28px;
+  line-height: 32px;
+  letter-spacing: -0.015em;
+}
+
+@utility body-lg {
+  font-family: var(--pro-font-body);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 31px;
+}
+@utility body-md {
+  font-family: var(--pro-font-body);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 27px;
+}
+@utility body-sm {
+  font-family: var(--pro-font-body);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 22px;
+}
+@utility body-strong {
+  font-family: var(--pro-font-body);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 24px;
+}
+@utility ui-button {
+  font-family: var(--pro-font-body);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+}
+@utility ui-small {
+  font-family: var(--pro-font-body);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+}
+@utility hand {
+  font-family: var(--pro-font-hand);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 25px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Papier texturé : couleur de fond + papier en multiply (90 %)
+   + grain en overlay (8 %). Les deux couches vivent dans des
+   pseudo-éléments pour garder le contenu au-dessus.
+   ───────────────────────────────────────────────────────────── */
+
+@utility paper-texture {
+  position: relative;
+  isolation: isolate;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  &::before {
+    background: var(--pro-paper-image) center / cover no-repeat;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+  &::after {
+    background: var(--pro-grain-image) top left / 256px 256px repeat;
+    mix-blend-mode: overlay;
+    opacity: 0.08;
+  }
+}
+
+/* Gravures : posées en multiply pour que le blanc du papier gravé
+   disparaisse dans le papier de la section. */
+@utility engraving {
+  mix-blend-mode: multiply;
+}
