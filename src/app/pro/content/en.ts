@@ -171,6 +171,7 @@ const en: ProContent = {
       followUp: "Shall I suggest a time slot to talk it over with Killian?",
       actions: ["Book 20 min", "Leave my number"],
       placeholder: "Write a message…",
+      examples: ["How much is a website?", "Do you work in Geneva?", "How long until it's online?"],
       send: "Send",
     },
   },
@@ -209,6 +210,7 @@ const en: ProContent = {
   about: {
     title: ["One point of contact,", "from the first call to ongoing support."],
     portraitAlt: "Killian, by a river, in a green T-shirt, smiling",
+    photoCaption: "Killian, between Annecy and Geneva",
     milestones: [
       { title: "Since 2021", text: "I design and build websites and tools." },
       { title: "Obrado", text: "Co-founder and technical lead of this online software." },

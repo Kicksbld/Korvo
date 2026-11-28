@@ -87,6 +87,8 @@ export interface ProContent {
       followUp: string;
       actions: [string, string];
       placeholder: string;
+      /** Questions d'exemple qui s'écrivent seules dans le champ (invitation à essayer). */
+      examples: string[];
       send: string;
     };
   };
@@ -118,6 +120,8 @@ export interface ProContent {
     /** Deux lignes. */
     title: [string, string];
     portraitAlt: string;
+    /** Légende manuscrite sous le tirage photo. */
+    photoCaption: string;
     /** Les 4 repères : haut gauche, bas gauche, haut droite, bas droite (desktop). */
     milestones: [Milestone, Milestone, Milestone, Milestone];
     bio: string;

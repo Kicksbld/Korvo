@@ -34,9 +34,10 @@ export function IconButton({ label, icon, variant = "inverse", size = "md", clas
       {...rest}
       className={cx(
         "inline-flex shrink-0 items-center justify-center rounded-pill",
-        "transition-[background-color,transform,opacity] duration-150 ease-out",
-        "active:scale-[0.97] motion-reduce:active:scale-100",
-        "disabled:cursor-default disabled:opacity-40",
+        "press",
+        // aria-disabled (et non disabled) : le bouton garde le focus clavier
+        // quand on arrive au bout d'un carrousel.
+        "disabled:cursor-default disabled:opacity-40 aria-disabled:cursor-default aria-disabled:opacity-40 aria-disabled:active:scale-none",
         size === "md" ? "size-12" : "size-11",
         variants[variant],
         className,

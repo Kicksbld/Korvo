@@ -47,7 +47,10 @@ export function Card<T extends ElementType = "div">({
     <Tag
       {...rest}
       className={cx(
-        tone === "raised" ? "border border-border-faint bg-paper-raised text-ink" : "bg-forest text-paper",
+        // Contraste élevé : bordure 1 px encre (papier sur la carte vert forêt).
+        tone === "raised"
+          ? "border border-border-faint bg-paper-raised text-ink contrast-more:border-ink"
+          : "bg-forest text-paper contrast-more:border contrast-more:border-paper",
         radii[radius],
         shadows[shadow],
         className,

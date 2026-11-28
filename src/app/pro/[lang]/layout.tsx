@@ -69,7 +69,14 @@ export default async function ProRootLayout(props: LayoutProps<"/pro/[lang]">) {
 
   return (
     <html lang={lang} className={`${fraunces.variable} ${sourceSans.variable} ${caveat.variable}`}>
-      <body className="min-h-dvh bg-paper text-ink">{props.children}</body>
+      <body className="min-h-dvh bg-paper text-ink">
+        {/* Sans JavaScript : les cartes du hero (masquées en attendant leur
+            animation, voir pro-motion.css) restent visibles. */}
+        <noscript>
+          <style>{".drop-card{opacity:1!important;animation:none!important}"}</style>
+        </noscript>
+        {props.children}
+      </body>
     </html>
   );
 }

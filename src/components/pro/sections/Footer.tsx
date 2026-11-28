@@ -4,20 +4,20 @@ import type { ProContent } from "@/app/pro/content/types";
 import { BOOKING_HREF, proPath } from "@/app/pro/urls";
 import { Button } from "../Button";
 import { Container } from "../Container";
-import { TornEdge } from "../TornEdge";
 
 /* Pied de page (Figma 207-1192 desktop, 207-1668 mobile).
 
    Fond #272F1D : la couleur exacte du ciel de la gravure des montagnes
    (illustration 4/4), qui s'y fond sans bord. Zones couvertes, bouton,
    gravure, KORVO géant, mentions.
-   « Mentions légales » pointe vers la page créée en phase 6. */
+   « Mentions légales » pointe vers la page créée en phase 6.
+   Il est dévoilé en rideau (Curtain) : la déchirure est donc portée par le
+   bas de la section Contact, qui glisse par-dessus. */
 
 export function Footer({ lang, t }: { lang: Locale; t: ProContent["footer"] }) {
   return (
     // pb mobile : place pour la barre fixe du bas.
     <footer className="relative bg-footer pt-10 pb-[121px] text-paper md:pt-16 md:pb-8">
-      <TornEdge color="var(--pro-footer)" seed={79} />
       <Container className="flex flex-col gap-5 md:gap-10">
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-10">
           <div className="flex flex-col gap-1.5 md:gap-2">

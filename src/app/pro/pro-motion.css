@@ -1,0 +1,298 @@
+/* Page pro Korvo — mouvement et préférences du visiteur (phase 3).
+   Spec : Figma 214-83. Les interactions au doigt (carrousels, pastilles)
+   sont en JavaScript (src/components/pro/motion/spring.ts) ; ici, seulement
+   ce qui ne se saisit pas.
+
+   Peu d'animations, mais ciblées :
+   - titres de section : mot à mot sous un masque (au défilement) ;
+   - hero : titre mot à mot puis cartes-problèmes « posées sur la table » ;
+   - étiquettes des clés : balancement amorti au bout de leur cordelette ;
+   - frise du processus qui se trace (ProcessTrack), pied de page en
+     rideau (Curtain) : en JavaScript.
+
+   Déclencheur commun : RevealObserver pose `data-revealed` sur les éléments
+   `data-reveal` qui entrent à l'écran — "now" s'ils y étaient déjà au
+   chargement (pas d'animation), "in" sinon (animation). Rien n'est masqué
+   tant que `html[data-reveal]` n'est pas posé : sans JavaScript, tout est
+   visible.
+
+   Variante ajoutée :
+   - reduce-transparency: → @media (prefers-reduced-transparency: reduce)
+   (motion-reduce: et contrast-more: existent déjà dans Tailwind). */
+
+@custom-variant reduce-transparency (@media (prefers-reduced-transparency: reduce));
+
+:root {
+  /* Ressort sans rebond (amortissement 1, réponse 0,35 s), échantillonné en
+     courbe CSS. Sa durée naturelle de stabilisation est de 0,515 s. */
+  --pro-ease-spring: linear(0, 0.058, 0.181, 0.321, 0.456, 0.574, 0.672, 0.751, 0.813, 0.861, 0.897, 0.924, 0.945, 0.96, 0.971, 0.979, 0.985, 0.989, 0.992, 0.994, 0.996, 0.997, 0.998, 0.999, 1);
+  --pro-spring-duration: 515ms;
+  /* Sortie très douce, pour les mots qui montent. */
+  --pro-ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  /* Courbe des feuilles iOS : entrée et sortie de la barre fixe mobile. */
+  --pro-ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Ouverture animée de la FAQ (block-size: auto), là où c'est pris en charge. */
+  interpolate-size: allow-keywords;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ── Retour à l'appui : échelle 0,97 en 100 ms, dès pointer-down. ──
+   Propriété `scale` (et non `transform`) pour ne pas écraser une rotation
+   ou une translation posée sur le même élément. Avec « réduire les
+   animations », l'appui reste visible mais en légère baisse d'opacité. */
+@utility press {
+  transition-property: scale, opacity, background-color, color, border-color, box-shadow, filter;
+  transition-duration: 160ms, 100ms, 150ms, 150ms, 150ms, 150ms, 150ms;
+  transition-timing-function: var(--pro-ease-spring);
+
+  &:active {
+    scale: 0.97;
+    transition-duration: 100ms;
+    transition-timing-function: ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &:active {
+      scale: none;
+      opacity: 0.8;
+    }
+  }
+}
+
+/* ── Fondu court (prix à la bascule € / CHF, changement d'onglet) ── */
+@keyframes pro-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility fade-swap {
+  animation: pro-fade-in 220ms ease-out both;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Titres : mot à mot sous un masque (composant <Words>).
+   Chaque mot (.word) rogne son contenu (.word-in), qui monte depuis
+   sous la ligne, avec 110 ms d'écart entre les mots (--w = rang).
+   ───────────────────────────────────────────────────────────── */
+
+.word {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: top;
+  /* Marge de rognage pour les accents et les jambages (É, g, p). */
+  padding-block: 0.1em;
+  margin-block: -0.1em;
+}
+
+.word-in {
+  display: inline-block;
+}
+
+@keyframes pro-word {
+  from {
+    translate: 0 112%;
+  }
+}
+
+/* Au défilement (h2). */
+html[data-reveal] [data-reveal="title"]:not([data-revealed]) .word-in {
+  translate: 0 112%;
+}
+
+html[data-reveal] [data-reveal="title"] .word-in {
+  transition: translate 1400ms var(--pro-ease-out-expo);
+  transition-delay: calc(var(--w, 0) * 110ms);
+}
+
+/* Au chargement (h1 du hero), sans attendre JavaScript. */
+.words-load .word-in {
+  animation: pro-word 1400ms var(--pro-ease-out-expo) both;
+  animation-delay: calc(100ms + var(--w, 0) * 110ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-reveal] [data-reveal="title"]:not([data-revealed]) .word-in {
+    translate: none;
+    opacity: 0;
+  }
+  html[data-reveal] [data-reveal="title"] .word-in {
+    transition: opacity 400ms ease-out;
+    transition-delay: 0ms;
+  }
+  .words-load .word-in {
+    animation: pro-fade-in 400ms ease-out both;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Cartes-problèmes du hero : « posées sur la table ».
+   Chaque carte arrive un peu plus haut, plus grande et plus tournée
+   (--drop-r), puis se pose avec un léger rebond.
+
+   Chaque carte a son propre déclencheur (data-reveal="card") : elle se
+   pose quand ELLE arrive à l'écran — au chargement pour celles du haut
+   (après le titre), au défilement pour celles du bas, au glissement pour
+   celles du carrousel mobile. RevealObserver règle le décalage (--d).
+
+   Les cartes sont masquées d'emblée (pour ne pas apparaître puis
+   disparaître à l'hydratation). Filets de sécurité : sans JavaScript
+   (<noscript> dans le layout) elles sont visibles ; si le script ne
+   démarre pas, elles réapparaissent après 2,5 s.
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes pro-drop {
+  0% {
+    opacity: 0;
+    translate: 0 -22px;
+    scale: 1.08;
+    rotate: var(--drop-r, 6deg);
+  }
+  40% {
+    opacity: 1;
+  }
+  68% {
+    translate: 0 2px;
+    scale: 0.985;
+    rotate: calc(var(--drop-r, 6deg) * -0.14);
+    animation-timing-function: ease-in-out;
+  }
+  100% {
+    translate: 0 0;
+    scale: 1;
+    rotate: 0deg;
+  }
+}
+
+@keyframes pro-show {
+  to {
+    opacity: 1;
+  }
+}
+
+.drop-card {
+  opacity: 0;
+}
+
+.drop-card[data-revealed] {
+  opacity: 1;
+}
+
+.drop-card[data-revealed="in"] {
+  animation: pro-drop 900ms cubic-bezier(0.25, 0.8, 0.3, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+html:not([data-reveal]) .drop-card {
+  animation: pro-show 300ms 2.5s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop-card[data-revealed="in"] {
+    animation: pro-fade-in 400ms ease-out both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Étiquettes des clés : balancement amorti au bout de la cordelette.
+   Pivot à l'œillet (en haut à droite). Une seule fois à l'arrivée
+   (.swing), puis un petit balancement au survol (.swing-hover,
+   élément distinct pour ne pas relancer l'arrivée).
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes pro-swing-in {
+  0% {
+    opacity: 0;
+    rotate: var(--sw, 9deg);
+    translate: 0 -8px;
+  }
+  18% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  42% {
+    rotate: calc(var(--sw, 9deg) * -0.5);
+  }
+  64% {
+    rotate: calc(var(--sw, 9deg) * 0.22);
+  }
+  82% {
+    rotate: calc(var(--sw, 9deg) * -0.08);
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
+
+@keyframes pro-swing-nudge {
+  25% {
+    rotate: 4deg;
+  }
+  55% {
+    rotate: -2.2deg;
+  }
+  80% {
+    rotate: 0.8deg;
+  }
+}
+
+.swing,
+.swing-hover {
+  transform-origin: calc(100% - 18px) 16px; /* l'œillet */
+}
+
+html[data-reveal] [data-reveal="keys"]:not([data-revealed]) .swing {
+  opacity: 0;
+}
+
+[data-reveal="keys"][data-revealed="in"] .swing {
+  animation: pro-swing-in 1500ms ease-in-out both;
+  animation-delay: calc(var(--i, 0) * 140ms);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .swing-hover:hover {
+    animation: pro-swing-nudge 1100ms ease-in-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal="keys"][data-revealed="in"] .swing {
+    animation: pro-fade-in 400ms ease-out both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+}
+
+/* ── Curseur du champ de l'assistant (TypingPlaceholder) ── */
+@keyframes pro-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── FAQ : ouverture et fermeture en douceur (<details name="faq">). ──
+   Navigateurs sans ::details-content ou sans interpolate-size : ouverture
+   instantanée, rien ne casse. */
+.pro-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size var(--pro-spring-duration) var(--pro-ease-spring),
+    content-visibility var(--pro-spring-duration) allow-discrete;
+}
+
+.pro-faq[open]::details-content {
+  block-size: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pro-faq::details-content {
+    transition: none;
+  }
+}

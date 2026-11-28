@@ -56,9 +56,8 @@ export function buttonClasses({
 }: Pick<CommonProps, "variant" | "size" | "className">) {
   return cx(
     "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-pill",
-    "transition-[background-color,filter,transform] duration-150 ease-out",
-    // Retour immédiat à l'appui (spec mouvement) — le ressort viendra en phase 3.
-    "active:scale-[0.97] motion-reduce:active:scale-100",
+    // Retour immédiat à l'appui : échelle 0,97 en 100 ms (pro-motion.css).
+    "press",
     "disabled:pointer-events-none disabled:opacity-50",
     variants[variant],
     sizes[size],

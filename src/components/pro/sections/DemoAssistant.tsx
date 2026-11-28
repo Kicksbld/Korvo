@@ -4,11 +4,15 @@ import { Container } from "../Container";
 import { cx } from "../cx";
 import { CheckIcon, CloseIcon, SendIcon } from "../icons";
 import { Section } from "../Section";
+import { Words } from "../Words";
+import { TypingPlaceholder } from "./TypingPlaceholder";
 
 /* Démo assistant (Figma 207-750 desktop, 207-1354 mobile) — papier.
 
    Phase 2 : interface figée, avec la conversation de la maquette et
-   l'étiquette « Démo » toujours visible. Rien n'est cliquable : les faux
+   l'étiquette « Démo » toujours visible. Phase 3 : le champ affiche des
+   questions d'exemple qui s'écrivent seules (TypingPlaceholder), pour
+   inviter à essayer. Rien n'est cliquable : les faux
    boutons et le faux champ sont masqués aux lecteurs d'écran, la
    conversation reste lisible. L'assistant réel arrive en phase 5.
 
@@ -25,14 +29,14 @@ function AssistantPanel({ t, variant }: { t: Demo["assistant"]; variant: "phone"
         "flex w-full flex-col overflow-hidden bg-paper-raised text-ink",
         inPhone
           ? "rounded-t-[28px] shadow-[0_-6px_30px_rgb(0_0_0/0.18)]"
-          : "rounded-surface border border-border-default shadow-[0_16px_36px_rgb(26_20_10/0.12)]",
+          : "rounded-surface border border-border-default contrast-more:border-ink shadow-[0_16px_36px_rgb(26_20_10/0.12)]",
       )}
     >
       <div aria-hidden="true" className="flex justify-center pt-2 pb-1">
         <span className="h-[5px] w-9 rounded-[3px] bg-border-strong" />
       </div>
 
-      <div className="flex items-center gap-2.5 border-b border-border-faint pt-2 pr-3.5 pb-3 pl-[18px]">
+      <div className="flex items-center gap-2.5 border-b border-border-faint contrast-more:border-ink pt-2 pr-3.5 pb-3 pl-[18px]">
         <Image src="/pro/photos/killian-avatar.webp" alt="" width={34} height={34} className="size-[34px] shrink-0 rounded-full object-cover" />
         <div className="flex min-w-0 flex-1 flex-col">
           <p className="font-body text-[15px] leading-[19px] font-semibold">{t.name}</p>
@@ -48,7 +52,7 @@ function AssistantPanel({ t, variant }: { t: Demo["assistant"]; variant: "phone"
           <p className="max-w-[245px] rounded-[18px] rounded-br-[6px] bg-sage-900 px-3.5 py-2.5 leading-5 text-paper">{t.question}</p>
         </div>
         <p className="leading-[21px]">{t.answer}</p>
-        <div className="flex items-center gap-3 rounded-[14px] border border-border-default bg-paper px-3.5 py-3">
+        <div className="flex items-center gap-3 rounded-[14px] border border-border-default contrast-more:border-ink bg-paper px-3.5 py-3">
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <p className="display text-lg leading-[22px] tracking-[-0.01em] text-ink">{t.offer.name}</p>
             <p className="text-xs leading-4 text-ink-3">{t.offer.delay}</p>
@@ -66,8 +70,10 @@ function AssistantPanel({ t, variant }: { t: Demo["assistant"]; variant: "phone"
       </div>
 
       <div aria-hidden="true" className={cx("flex items-center gap-2 pt-2.5 pr-2.5 pl-3.5", inPhone ? "pb-2" : "pb-3.5")}>
-        <span className="flex h-[42px] flex-1 items-center rounded-pill bg-paper-sunken px-4 font-body text-sm text-ink-2">
-          {t.placeholder}
+        {/* Le champ montre des questions d'exemple qui s'écrivent seules :
+            on comprend tout de suite qu'on peut parler à l'assistant. */}
+        <span className="flex h-[42px] min-w-0 flex-1 items-center rounded-pill bg-paper px-4 font-body text-sm text-ink-2 ring-[1.5px] ring-sage">
+          <TypingPlaceholder texts={t.examples} />
         </span>
         <span className="flex size-[42px] shrink-0 items-center justify-center rounded-full bg-sage-900 text-paper">
           <SendIcon />
@@ -129,8 +135,8 @@ export function DemoAssistant({ t }: { t: Demo }) {
     <Section id="demo" tone="paper" tear={37} aria-labelledby="demo-title">
       <Container className="flex flex-col gap-7 md:gap-12 xl:flex-row xl:items-center xl:justify-center xl:gap-[72px]">
         <div className="flex flex-col gap-5 pt-6 md:pt-0 xl:w-[380px] xl:shrink-0">
-          <h2 id="demo-title" className="display-mobile-l md:display-m">
-            {t.title}
+          <h2 data-reveal="title" id="demo-title" className="display-mobile-l md:display-m">
+            <Words lines={t.title} />
           </h2>
           <p className="body-md hidden max-w-[480px] text-ink-2 md:block">{t.intro}</p>
         </div>

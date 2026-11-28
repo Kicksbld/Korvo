@@ -5,6 +5,7 @@ import { Container } from "../Container";
 import { cx } from "../cx";
 import { Section } from "../Section";
 import { WorkTrack } from "./WorkTrack";
+import { Words } from "../Words";
 
 /* Réalisations (Figma 210-44 desktop, 210-102 mobile) — fond vert forêt.
 
@@ -125,8 +126,8 @@ export function Realisations({ t }: { t: ProContent["work"] }) {
     >
       <div className="flex flex-col gap-6 md:gap-12">
         <Container className="flex flex-col gap-2.5 md:flex-row md:items-end md:justify-between md:gap-10">
-          <h2 id="realisations-title" className="display-mobile-l md:display-m">
-            {t.title}
+          <h2 data-reveal="title" id="realisations-title" className="display-mobile-l md:display-m">
+            <Words lines={t.title} />
           </h2>
           <p className="body-md md:body-lg max-w-[440px] text-sage-200 md:text-right">
             {t.intro[0]}
