@@ -172,6 +172,7 @@ const fr: ProContent = {
       followUp: "Je vous propose un créneau pour en parler avec Killian ?",
       actions: ["Réserver 20 min", "Laisser mon numéro"],
       placeholder: "Écrire un message…",
+      examples: ["Combien coûte un site\u00a0?", "Vous intervenez à Genève\u00a0?", "En combien de temps c'est en ligne\u00a0?"],
       send: "Envoyer",
     },
   },
@@ -210,6 +211,7 @@ const fr: ProContent = {
   about: {
     title: ["Un seul interlocuteur,", "du premier appel au suivi."],
     portraitAlt: "Killian, au bord d'une rivière, en t-shirt vert, souriant",
+    photoCaption: "Killian, entre Annecy et Genève",
     milestones: [
       { title: "Depuis 2021", text: "Je conçois et je développe des sites et des outils." },
       { title: "Obrado", text: "Cofondateur et responsable technique de ce logiciel en ligne." },

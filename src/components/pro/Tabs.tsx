@@ -2,6 +2,7 @@
 
 import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "./cx";
+import { useSlidingPill } from "./motion/useSlidingPill";
 
 /* Onglets en pilule sur fond vert forêt (« J'ai besoin d'un site » /
    « Je veux gagner du temps »), avec icône.
@@ -9,8 +10,8 @@ import { cx } from "./cx";
    Ce composant ne rend que la liste d'onglets (role="tablist") : la section
    qui l'utilise affiche le panneau correspondant et lui donne l'id
    `${idPrefix}-panel-${value}`. Flèches gauche/droite, Début/Fin.
-   Contrôlé (`value` + `onChange`) ou non (`defaultValue`). La pastille qui
-   glisse arrive en phase 3. En mobile, la liste prend toute la largeur. */
+   Contrôlé (`value` + `onChange`) ou non (`defaultValue`). La pastille
+   glisse en ressort, interruptible (useSlidingPill). En mobile, la liste prend toute la largeur. */
 
 export type TabItem<V extends string> = { value: V; label: string; icon?: ReactNode };
 
@@ -33,6 +34,8 @@ export function Tabs<V extends string>({ items, value, defaultValue, onChange, l
   const [inner, setInner] = useState<V>(defaultValue ?? items[0].value);
   const current = value ?? inner;
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
+  const root = useRef<HTMLDivElement>(null);
+  const pill = useSlidingPill(root, refs, Math.max(0, items.findIndex((i) => i.value === current)));
 
   const select = (next: V) => {
     if (value === undefined) setInner(next);
@@ -53,10 +56,17 @@ export function Tabs<V extends string>({ items, value, defaultValue, onChange, l
 
   return (
     <div
+      ref={root}
       role="tablist"
       aria-label={label}
-      className={cx("flex max-w-full gap-1.5 rounded-pill bg-forest p-1.5 md:inline-flex", className)}
+      className={cx("group relative flex max-w-full gap-1.5 rounded-pill bg-forest p-1.5 md:inline-flex contrast-more:border contrast-more:border-paper", className)}
     >
+      {/* Pastille : visible une fois mesurée (data-pill="ready"). */}
+      <span
+        ref={pill}
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1.5 bottom-1.5 left-0 rounded-pill bg-forest-2 opacity-0 will-change-transform group-data-[pill=ready]:opacity-100 contrast-more:border contrast-more:border-paper"
+      />
       {items.map((item, index) => {
         const selected = item.value === current;
         return (
@@ -76,10 +86,10 @@ export function Tabs<V extends string>({ items, value, defaultValue, onChange, l
             className={cx(
               // Mobile (maquette 390) : 14 px, padding resserré, les libellés
               // peuvent passer sur deux lignes sur les très petits écrans.
-              "flex min-h-11 flex-auto items-center justify-center gap-2 rounded-pill px-4 py-[13px] text-left ui-small",
+              "press relative flex min-h-11 flex-auto items-center justify-center gap-2 rounded-pill px-4 py-[13px] text-left ui-small",
               "md:flex-none md:whitespace-nowrap md:px-[26px] md:py-3.5 md:ui-button",
-              "transition-[background-color,color] duration-150 ease-out",
-              selected ? "bg-forest-2 text-paper" : "text-sage-200 hover:text-paper",
+              // Avant hydratation, l'onglet actif porte son fond ; ensuite, la pastille.
+              selected ? "bg-forest-2 text-paper group-data-[pill=ready]:bg-transparent" : "text-sage-200 hover:text-paper",
             )}
           >
             {item.icon}

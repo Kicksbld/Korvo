@@ -1,16 +1,24 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import type { ProContent } from "@/app/pro/content/types";
 import { Container } from "../Container";
 import { cx } from "../cx";
 import { CheckSmallIcon } from "../icons";
 import { Section } from "../Section";
+import { Words } from "../Words";
 
 /* Tout reste à vous (Figma 211-44 desktop, 211-107 mobile) — ocre clair.
 
    Le trousseau gravé (illustration 3/4) et 4 étiquettes « à votre nom »
    reliées à l'anneau par des cordelettes. Deux scènes aux coordonnées
    Figma : 716 × 600 à partir de 1280, 350 × 540 en dessous. Puis le bloc
-   « Mes engagements » (5 garanties). */
+   « Mes engagements » (5 garanties).
+
+   Mouvement : quand le trousseau arrive à l'écran, chaque étiquette tombe
+   au bout de sa cordelette et se balance avant de s'immobiliser (pivot à
+   l'œillet), l'une après l'autre ; un petit balancement au survol
+   (pro-motion.css, .swing / .swing-hover). La gravure des clés a un fond
+   blanc pur : en multiply, il disparaît dans le papier ocre. */
 
 type Keys = ProContent["keys"];
 
@@ -29,19 +37,60 @@ const TAGS_MOBILE = [
   { left: 184.92, top: 440, width: 164.86, height: 105.24, rotate: 3 },
 ] as const;
 
-type Box = { left: number; top: number; width: number; height: number; rotate: number };
+type Box = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  rotate: number;
+};
 
-function KeyTag({ label, note, box, width }: { label: string; note: string; box: Box; width: number }) {
+function KeyTag({
+  label,
+  note,
+  box,
+  width,
+  index,
+}: {
+  label: string;
+  note: string;
+  box: Box;
+  width: number;
+  index: number;
+}) {
   return (
-    <li className="absolute flex items-center justify-center" style={{ left: box.left, top: box.top, width: box.width, height: box.height }}>
+    <li
+      className="absolute flex items-center justify-center"
+      style={{
+        left: box.left,
+        top: box.top,
+        width: box.width,
+        height: box.height,
+      }}
+    >
       <div
-        className="relative flex shrink-0 flex-col gap-0.5 rounded-tag border border-border-strong bg-paper-raised pt-3.5 pr-4 pb-3 pl-[18px] shadow-tag"
-        style={{ width, transform: `rotate(${box.rotate}deg)` }}
+        className="swing shrink-0"
+        style={
+          {
+            "--i": index,
+            "--sw": `${index % 2 ? -10 : 10}deg`,
+          } as CSSProperties
+        }
       >
-        {/* Œillet de l'étiquette. */}
-        <span aria-hidden="true" className="absolute top-[11px] right-[13px] size-2.5 rounded-full border border-border-strong bg-ochre-soft" />
-        <span className="pr-5 font-body text-base leading-[21px] font-semibold text-ink">{label}</span>
-        <span className="hand whitespace-nowrap text-ochre">{note}</span>
+        <div className="swing-hover">
+          <div
+            className="relative flex flex-col gap-0.5 rounded-tag border border-border-strong bg-paper-raised pt-3.5 pr-4 pb-3 pl-[18px] shadow-tag contrast-more:border-ink"
+            style={{ width, transform: `rotate(${box.rotate}deg)` }}
+          >
+            {/* Œillet de l'étiquette. */}
+            <span
+              aria-hidden="true"
+              className="absolute top-[11px] right-[13px] size-2.5 rounded-full border border-border-strong bg-ochre-soft"
+            />
+            <span className="pr-5 font-body text-base leading-[21px] font-semibold text-ink">{label}</span>
+            <span className="hand whitespace-nowrap text-ochre">{note}</span>
+          </div>
+        </div>
       </div>
     </li>
   );
@@ -52,18 +101,22 @@ function KeyRing({ t, variant }: { t: Keys; variant: "desktop" | "mobile" }) {
   const boxes = desktop ? TAGS_DESKTOP : TAGS_MOBILE;
   return (
     <div
+      data-reveal="keys"
       className={cx(
         "relative shrink-0",
         desktop ? "hidden h-[600px] w-[716px] xl:block" : "mx-auto h-[540px] w-[350px] xl:hidden",
       )}
     >
       <Image
-        src="/pro/gravures/cles.webp"
+        src="/pro/gravures/cles-encre.webp"
         alt=""
         width={512}
         height={512}
         sizes={desktop ? "380px" : "240px"}
-        className={cx("engraving absolute", desktop ? "top-[110px] left-[168px] size-[380px]" : "top-[150px] left-[55px] size-60")}
+        className={cx(
+          "engraving absolute",
+          desktop ? "top-[110px] left-[168px] size-[380px]" : "top-[150px] left-[55px] size-60",
+        )}
       />
       <Image
         src={desktop ? "/pro/cles/cordelettes-desktop.svg" : "/pro/cles/cordelettes-mobile.svg"}
@@ -75,7 +128,7 @@ function KeyRing({ t, variant }: { t: Keys; variant: "desktop" | "mobile" }) {
       />
       <ul>
         {t.tags.map((label, i) => (
-          <KeyTag key={label} label={label} note={t.tagNote} box={boxes[i]} width={desktop ? 210 : 160} />
+          <KeyTag key={label} label={label} note={t.tagNote} box={boxes[i]} width={desktop ? 210 : 160} index={i} />
         ))}
       </ul>
     </div>
@@ -89,8 +142,8 @@ export function ToutResteAVous({ t }: { t: Keys }) {
       <Container className="flex flex-col gap-8 md:gap-16">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:gap-14">
           <div className="flex flex-col gap-[22px] xl:max-w-[540px] xl:min-w-0 xl:flex-1">
-            <h2 id="cles-title" className="display-mobile-l md:display-m max-w-[640px]">
-              {t.title}
+            <h2 data-reveal="title" id="cles-title" className="display-mobile-l md:display-m max-w-[640px]">
+              <Words lines={t.title} />
             </h2>
             <p className="body-md md:body-lg max-w-[640px] text-ink-2">{t.text}</p>
             <p className="body-sm md:body-md max-w-[640px] text-sepia">{t.aside}</p>
@@ -100,7 +153,7 @@ export function ToutResteAVous({ t }: { t: Keys }) {
           <KeyRing t={t} variant="desktop" />
         </div>
 
-        <div className="flex flex-col gap-4 rounded-[22px] border border-border-faint bg-paper-raised px-5 py-6 md:gap-8 md:px-12 md:py-10 xl:flex-row xl:gap-14 xl:rounded-surface">
+        <div className="flex flex-col gap-4 rounded-[22px] border border-border-faint contrast-more:border-ink bg-paper-raised px-5 py-6 md:gap-8 md:px-12 md:py-10 xl:flex-row xl:gap-14 xl:rounded-surface">
           <div className="flex flex-col gap-3 xl:w-[300px] xl:shrink-0">
             <h3 className="display-mobile-m md:display-s">{c.title}</h3>
             <p className="body-sm hidden text-ink-2 md:block">{c.text}</p>
@@ -108,7 +161,10 @@ export function ToutResteAVous({ t }: { t: Keys }) {
           <ul className="grid gap-3 md:grid-cols-2 md:gap-x-10 md:gap-y-6 xl:flex-1">
             {c.items.map((item) => (
               <li key={item.title} className="flex items-start gap-3">
-                <span aria-hidden="true" className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-sage-050 text-sage-900">
+                <span
+                  aria-hidden="true"
+                  className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-sage-050 text-sage-900"
+                >
                   <CheckSmallIcon />
                 </span>
                 <span className="flex flex-col gap-0.5">
